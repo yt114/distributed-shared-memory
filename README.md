@@ -12,8 +12,10 @@ To implement the broadcast<M>, swap #servers threads and each thread synchronize
 design 2-asynchronized IO: which is the procedure in [1].
 read google rpc asynchronized IO
 
-## Procedure Label
+## Procedure record
 Mutiple-writer atomic register needs extract step to pick timestamp in contrast of single-writer register which can track latest timestamp in client processor's memory. In [1], client utilizes procedure label to fetch largest timestamp from the atomic register system consists of server quorums. Note, the timestamp is unbounded integer. 
 
-## collect operation
-This is trivally implemented by running mutiple copies of ABD in paralle. look for proof in terms of linear propoerty for mutiple atomic registers. 
+## Procedure Ack
+
+design 1- each server process can only serve one Read/write at one time.
+A global mutex lock is used to protect critical section. 
