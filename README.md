@@ -19,3 +19,7 @@ Mutiple-writer atomic register needs extract step to pick timestamp in contrast 
 
 design 1- each server process can only serve one Read/write at one time.
 A global mutex lock is used to protect critical section. 
+
+
+Reference:
+[1] Sharing memory robustly in message-passing systems. H Attiya, A Bar-Noy, D Dolev. Journal of the ACM 42 (1), 124-142, 1995. 638, 1995.
