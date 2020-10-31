@@ -10,7 +10,7 @@ design 1-synchronized IO:
 To implement the broadcast<M>, swap #servers threads and each thread synchronizedly sends <M> and recvs <ACK> from one server.
   
 design 2-asynchronized IO: which is the procedure in [1]. source from google rpc asynchronized IO
-
+In this project, asynchronized send method is used. In each communicate procedure, the deadline of each rpc call is set to time_out = 5000ms. A comminicate procedire either returns key-value pair when receives from a majority server or return fail results when exceeds bounded deadline. This deadline serves as failure detection and bounds the waiting time for a single communicate procedure.
 
 ## Procedure record
 Mutiple-writer atomic register needs extract step to pick timestamp in contrast of single-writer register which can track latest timestamp in client processor's memory. In [1], client utilizes procedure label to fetch largest timestamp from the atomic register system consists of server quorums. Note, the timestamp is unbounded integer. 
