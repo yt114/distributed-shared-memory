@@ -23,8 +23,8 @@ A global mutex lock is used to protect critical section.
 design 2- asynchronized IO:
 asynchronized IO actually allows both client and server run in single thread with moderate performance. 
 
-# Server side states
-Each maintains a hashmap and each key in the hashmap is associated with state tuple(Logic time t, client id, value), where client id is used to bread tie of logic time t. 
+# Server side protocols
+Server side states: Each maintains a hashmap and each key in the hashmap is associated with state tuple(Logic time t, client id, value), where client id is used to bread tie of logic time t. 
 
 Client call update procedure (key, logic time t, client id, value):
 server update key value if timestamp consists of (t, id) is larger than current timestamp.
