@@ -32,7 +32,7 @@ server update key value if timestamp consists of (t, id) is larger than current 
 Client call query procedure (key):
 server returns the associated tuple (logic time t, client id, value).
 
-
+correstness gurantees: linearlizability is composable. 
 Reference:
 [1] Sharing memory robustly in message-passing systems. H Attiya, A Bar-Noy, D Dolev. Journal of the ACM 42 (1), 124-142, 1995. 638, 1995.
 eate an instance of the factory ServerBuilder class.
