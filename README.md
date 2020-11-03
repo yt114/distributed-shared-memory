@@ -1,6 +1,8 @@
 # distributed-shared-memory
 
-Complete network 
+Complete network.
+
+We treat each key-value pair as a object/automatic register. 
 
 ## Procedure communicate
 
