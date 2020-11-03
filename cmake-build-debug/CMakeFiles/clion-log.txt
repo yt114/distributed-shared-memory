@@ -1,6 +1,0 @@
-/snap/clion/129/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/ye/Documents/distributed-shared-memory
--- Using protobuf 3.13.0.0
--- Using gRPC 1.33.1
--- Configuring done
--- Generating done
--- Build files have been written to: /home/ye/Documents/distributed-shared-memory/cmake-build-debug
