@@ -1,0 +1,27 @@
+CXX = g++
+CXXFLAGS =-Wall -std=c++11 -Iinc -g `pkg-config --cflags protobuf grpc`
+LDFLAGS = -L/usr/local/lib -lm -ldl -lpthread `pkg-config --libs protobuf grpc++` -Wl,--no-as-needed -lgrpc++_reflection -Wl,--as-needed
+
+PROTOC = protoc
+GRPC_CPP_PLUGIN = grpc_cpp_plugin
+GRPC_CPP_PLUGIN_PATH ?= `which $(GRPC_CPP_PLUGIN)`
+
+PROTOS_PATH = ./
+
+vpath %.proto $(PROTOS_PATH)
+
+all: linearSM_server
+
+linearSM_server: server.cpp sharedMemory.grpc.pb.cc sharedMemory.pb.cc
+	$(CXX) $^ $(LDFLAGS) -o $@
+
+.PRECIOUS: %.grpc.pb.cc
+%.grpc.pb.cc: %.proto
+	$(PROTOC) -I $(PROTOS_PATH) --grpc_out=. --plugin=protoc-gen-grpc=$(GRPC_CPP_PLUGIN_PATH) $<
+
+.PRECIOUS: %.pb.cc
+%.pb.cc: %.proto
+	$(PROTOC) -I $(PROTOS_PATH) --cpp_out=. $<
+
+clean:
+	rm -f *.o *.pb.cc *.pb.h

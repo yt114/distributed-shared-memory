@@ -12,5 +12,20 @@ message(STATUS "Using protobuf ${Protobuf_VERSION}")
 find_package(gRPC CONFIG REQUIRED)
 message(STATUS "Using gRPC ${gRPC_VERSION}")
 
-add_executable(Client client.cpp client.h)
+add_executable(Client client.cpp
+        client.h
+        sharedMemory.grpc.pb.cc
+        sharedMemory.grpc.pb.h
+        sharedMemory.pb.cc
+        sharedMemory.pb.h
+        )
 target_link_libraries(Client gRPC::grpc++)
+
+add_executable(Server server.cpp
+        server.h
+        sharedMemory.grpc.pb.cc
+        sharedMemory.grpc.pb.h
+        sharedMemory.pb.cc
+        sharedMemory.pb.h
+        )
+target_link_libraries(Server gRPC::grpc++)

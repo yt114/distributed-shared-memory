@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+service LinearReadWrite{
+  rpc query(QueryRequestPacket) returns (ReplyPacket) {}
+  rpc update(UpdateRequestPacket) returns (ReplyPacket) {}
+}
+
+message QueryRequestPacket{
+  int32 clientID = 1;
+  string key = 2;
+}
+
+message UpdateRequestPacket{
+  int32 clientID = 1;
+  string key = 2;
+  string value = 3;//value to update to server
+  int32 lt = 4;
+}
+
+message ReplyPacket{
+  int32 serverID = 1;
+  int32 lt = 2;
+  int32 clientID = 3;
+  string value = 4;
+  bool is_success = 5;
+  //query rpc, this is always success.
+  //for update rpc, this is true when value is updated (i.e larger than server local lt)
+}
