@@ -21,9 +21,8 @@ design 1- synchronized IO: each server process can only serve one Read/write at 
 A global mutex lock is used to protect critical section. 
 
 design 2- asynchronized IO:
-
-
 asynchronized IO actually allows both client and server run in single thread with moderate performance. 
+In this project, grpc async server is implemented in a single thread to handle linearizable read/write request.
 
 
 Reference:
