@@ -17,6 +17,8 @@
 #include <thread>
 #include <unistd.h>
 #include "sharedMemory.grpc.pb.h"
+#include <unordered_map>
+#include <mutex>
 
 using grpc::Server;
 using grpc::ServerBuilder;
@@ -25,43 +27,30 @@ using grpc::Status;
 using grpc::ServerCompletionQueue;
 using namespace  std;
 
-int32_t ServerID = 0;
+std::mutex g_i_mutex; // global lock for query and
 
-class LinearSMImpl final : public LinearReadWrite::Service{
-    Status linear_read(ServerContext* context,
-                       const request* request,
-                       ack* response) override {
-        std::cout<<"read request:";
-        int32_t clientID, clientLT;
-        std::string key;
-        clientID = request->clientid();
-        clientLT = request->lt();
-        key = request->key();
+int ServerID = 0;
+string null_value = "00000";
+int null_lt = -1;
 
-        cout<<"Read call client ID:"<<clientID << " clientLT:"<<clientLT<<" key:"<<key<<endl;
-
-        this_thread::sleep_for(chrono::microseconds(200));
-        //usleep(10000);
-        response->set_serverid(ServerID);
-        response->set_lt(clientLT);
-        response->set_value("v2");
-        if (context->IsCancelled()) {
-            cout<<"Deadline exceeded"<<endl;
-            //return Status(StatusCode::CANCELLED, "Deadline exceeded or Client cancelled, abandoning.");
-        }
-        return Status::OK;
-    }
+struct RequestValue{
+    int clientID;
+    int lt; //logic time
+    string value;
+    string key;
 };
 
-void RunServer(const string server_address){
-    ServerBuilder builder;
-    LinearSMImpl service;
-    builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
-    builder.RegisterService(&service);
-    std::unique_ptr<Server> server(builder.BuildAndStart());
-    std::cout << "Server listening on " << server_address << std::endl;
-    server->Wait();
-}
+unordered_map<string, RequestValue> memory_cache;
 
+class LinearSMImpl final : public LinearReadWrite::Service{
+public:
+    explicit LinearSMImpl(string server_addr): server_address(std::move(server_addr)){}
+    Status query(ServerContext* context, const QueryRequestPacket* request, ReplyPacket* response) override;
+    Status update(::grpc::ServerContext* context, const ::UpdateRequestPacket* request, ::ReplyPacket* response) override;
+
+    string server_address;
+};
+
+void RunServer(const string& server_address);
 
 #endif //DISTRIBUTED_SHARED_MEMORY_SERVER_H

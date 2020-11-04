@@ -15,6 +15,7 @@ message UpdateRequestPacket{
   string key = 2;
   string value = 3;//value to update to server
   int32 lt = 4;
+  int32 fromClient = 5;
 }
 
 message ReplyPacket{

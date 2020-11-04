@@ -343,6 +343,7 @@ class UpdateRequestPacket PROTOBUF_FINAL :
     kValueFieldNumber = 3,
     kClientIDFieldNumber = 1,
     kLtFieldNumber = 4,
+    kFromClientFieldNumber = 5,
   };
   // string key = 2;
   void clear_key();
@@ -394,6 +395,15 @@ class UpdateRequestPacket PROTOBUF_FINAL :
   void _internal_set_lt(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
+  // int32 fromClient = 5;
+  void clear_fromclient();
+  ::PROTOBUF_NAMESPACE_ID::int32 fromclient() const;
+  void set_fromclient(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_fromclient() const;
+  void _internal_set_fromclient(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
   // @@protoc_insertion_point(class_scope:UpdateRequestPacket)
  private:
   class _Internal;
@@ -405,6 +415,7 @@ class UpdateRequestPacket PROTOBUF_FINAL :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr value_;
   ::PROTOBUF_NAMESPACE_ID::int32 clientid_;
   ::PROTOBUF_NAMESPACE_ID::int32 lt_;
+  ::PROTOBUF_NAMESPACE_ID::int32 fromclient_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_sharedMemory_2eproto;
 };
@@ -855,6 +866,26 @@ inline void UpdateRequestPacket::_internal_set_lt(::PROTOBUF_NAMESPACE_ID::int32
 inline void UpdateRequestPacket::set_lt(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_lt(value);
   // @@protoc_insertion_point(field_set:UpdateRequestPacket.lt)
+}
+
+// int32 fromClient = 5;
+inline void UpdateRequestPacket::clear_fromclient() {
+  fromclient_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 UpdateRequestPacket::_internal_fromclient() const {
+  return fromclient_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 UpdateRequestPacket::fromclient() const {
+  // @@protoc_insertion_point(field_get:UpdateRequestPacket.fromClient)
+  return _internal_fromclient();
+}
+inline void UpdateRequestPacket::_internal_set_fromclient(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  fromclient_ = value;
+}
+inline void UpdateRequestPacket::set_fromclient(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_fromclient(value);
+  // @@protoc_insertion_point(field_set:UpdateRequestPacket.fromClient)
 }
 
 // -------------------------------------------------------------------

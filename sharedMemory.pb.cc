@@ -89,6 +89,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_sharedMemory_2eproto::offsets[
   PROTOBUF_FIELD_OFFSET(::UpdateRequestPacket, key_),
   PROTOBUF_FIELD_OFFSET(::UpdateRequestPacket, value_),
   PROTOBUF_FIELD_OFFSET(::UpdateRequestPacket, lt_),
+  PROTOBUF_FIELD_OFFSET(::UpdateRequestPacket, fromclient_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::ReplyPacket, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -103,7 +104,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_sharedMemory_2eproto::offsets[
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::QueryRequestPacket)},
   { 7, -1, sizeof(::UpdateRequestPacket)},
-  { 16, -1, sizeof(::ReplyPacket)},
+  { 17, -1, sizeof(::ReplyPacket)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -114,15 +115,15 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 
 const char descriptor_table_protodef_sharedMemory_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\022sharedMemory.proto\"3\n\022QueryRequestPack"
-  "et\022\020\n\010clientID\030\001 \001(\005\022\013\n\003key\030\002 \001(\t\"O\n\023Upd"
+  "et\022\020\n\010clientID\030\001 \001(\005\022\013\n\003key\030\002 \001(\t\"c\n\023Upd"
   "ateRequestPacket\022\020\n\010clientID\030\001 \001(\005\022\013\n\003ke"
-  "y\030\002 \001(\t\022\r\n\005value\030\003 \001(\t\022\n\n\002lt\030\004 \001(\005\"`\n\013Re"
-  "plyPacket\022\020\n\010serverID\030\001 \001(\005\022\n\n\002lt\030\002 \001(\005\022"
-  "\020\n\010clientID\030\003 \001(\005\022\r\n\005value\030\004 \001(\t\022\022\n\nis_s"
-  "uccess\030\005 \001(\0102o\n\017LinearReadWrite\022,\n\005query"
-  "\022\023.QueryRequestPacket\032\014.ReplyPacket\"\000\022.\n"
-  "\006update\022\024.UpdateRequestPacket\032\014.ReplyPac"
-  "ket\"\000b\006proto3"
+  "y\030\002 \001(\t\022\r\n\005value\030\003 \001(\t\022\n\n\002lt\030\004 \001(\005\022\022\n\nfr"
+  "omClient\030\005 \001(\005\"`\n\013ReplyPacket\022\020\n\010serverI"
+  "D\030\001 \001(\005\022\n\n\002lt\030\002 \001(\005\022\020\n\010clientID\030\003 \001(\005\022\r\n"
+  "\005value\030\004 \001(\t\022\022\n\nis_success\030\005 \001(\0102o\n\017Line"
+  "arReadWrite\022,\n\005query\022\023.QueryRequestPacke"
+  "t\032\014.ReplyPacket\"\000\022.\n\006update\022\024.UpdateRequ"
+  "estPacket\032\014.ReplyPacket\"\000b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_sharedMemory_2eproto_deps[1] = {
 };
@@ -133,7 +134,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_sha
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_sharedMemory_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_sharedMemory_2eproto = {
-  false, false, descriptor_table_protodef_sharedMemory_2eproto, "sharedMemory.proto", 373,
+  false, false, descriptor_table_protodef_sharedMemory_2eproto, "sharedMemory.proto", 393,
   &descriptor_table_sharedMemory_2eproto_once, descriptor_table_sharedMemory_2eproto_sccs, descriptor_table_sharedMemory_2eproto_deps, 3, 0,
   schemas, file_default_instances, TableStruct_sharedMemory_2eproto::offsets,
   file_level_metadata_sharedMemory_2eproto, 3, file_level_enum_descriptors_sharedMemory_2eproto, file_level_service_descriptors_sharedMemory_2eproto,
@@ -406,8 +407,8 @@ UpdateRequestPacket::UpdateRequestPacket(const UpdateRequestPacket& from)
       GetArena());
   }
   ::memcpy(&clientid_, &from.clientid_,
-    static_cast<size_t>(reinterpret_cast<char*>(&lt_) -
-    reinterpret_cast<char*>(&clientid_)) + sizeof(lt_));
+    static_cast<size_t>(reinterpret_cast<char*>(&fromclient_) -
+    reinterpret_cast<char*>(&clientid_)) + sizeof(fromclient_));
   // @@protoc_insertion_point(copy_constructor:UpdateRequestPacket)
 }
 
@@ -416,8 +417,8 @@ void UpdateRequestPacket::SharedCtor() {
   key_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   value_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   ::memset(&clientid_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&lt_) -
-      reinterpret_cast<char*>(&clientid_)) + sizeof(lt_));
+      reinterpret_cast<char*>(&fromclient_) -
+      reinterpret_cast<char*>(&clientid_)) + sizeof(fromclient_));
 }
 
 UpdateRequestPacket::~UpdateRequestPacket() {
@@ -456,8 +457,8 @@ void UpdateRequestPacket::Clear() {
   key_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
   value_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
   ::memset(&clientid_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&lt_) -
-      reinterpret_cast<char*>(&clientid_)) + sizeof(lt_));
+      reinterpret_cast<char*>(&fromclient_) -
+      reinterpret_cast<char*>(&clientid_)) + sizeof(fromclient_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -498,6 +499,13 @@ const char* UpdateRequestPacket::_InternalParse(const char* ptr, ::PROTOBUF_NAME
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 32)) {
           lt_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // int32 fromClient = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 40)) {
+          fromclient_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -561,6 +569,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(4, this->_internal_lt(), target);
   }
 
+  // int32 fromClient = 5;
+  if (this->fromclient() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(5, this->_internal_fromclient(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -603,6 +617,13 @@ size_t UpdateRequestPacket::ByteSizeLong() const {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
         this->_internal_lt());
+  }
+
+  // int32 fromClient = 5;
+  if (this->fromclient() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_fromclient());
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -648,6 +669,9 @@ void UpdateRequestPacket::MergeFrom(const UpdateRequestPacket& from) {
   if (from.lt() != 0) {
     _internal_set_lt(from._internal_lt());
   }
+  if (from.fromclient() != 0) {
+    _internal_set_fromclient(from._internal_fromclient());
+  }
 }
 
 void UpdateRequestPacket::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
@@ -674,8 +698,8 @@ void UpdateRequestPacket::InternalSwap(UpdateRequestPacket* other) {
   key_.Swap(&other->key_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
   value_.Swap(&other->value_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(UpdateRequestPacket, lt_)
-      + sizeof(UpdateRequestPacket::lt_)
+      PROTOBUF_FIELD_OFFSET(UpdateRequestPacket, fromclient_)
+      + sizeof(UpdateRequestPacket::fromclient_)
       - PROTOBUF_FIELD_OFFSET(UpdateRequestPacket, clientid_)>(
           reinterpret_cast<char*>(&clientid_),
           reinterpret_cast<char*>(&other->clientid_));
