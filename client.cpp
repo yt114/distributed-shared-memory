@@ -4,71 +4,6 @@
 
 #include "client.h"
 
-//int asyn_communicate(string key, int time_wait=1000){
-//    CompletionQueue cq;
-//    vector<shared_ptr<request_holder>> holders;
-//    int reply_server_num = 0;
-//
-//    for (int i=0; i<server_num; i++) {
-//        ClientContext context;
-//        request req;
-//        long tag = i;
-//
-//        auto reply = new ack;
-//        auto status = new Status;
-//        shared_ptr<Channel> toserverChannel = grpc::CreateChannel(server_addrs[i],
-//                                                                  grpc::InsecureChannelCredentials());
-//        unique_ptr<LinearReadWrite::Stub> stub_ = LinearReadWrite::NewStub(toserverChannel);
-//
-//        req.set_clientid(0);
-//        req.set_key(key);
-//        req.set_lt(request_counter);
-//
-////        chrono::system_clock::time_point deadline =
-////                std::chrono::system_clock::now() + std::chrono::milliseconds(time_wait);
-////        context.set_deadline(deadline);
-//        unique_ptr<ClientAsyncResponseReader<ack>> rpc(
-//                stub_->PrepareAsynclinear_read(&context, req, &cq));
-//
-//        rpc->StartCall();
-//        rpc->Finish(reply, status, (void *) tag);
-//
-//        //move vars to request_holder
-//        shared_ptr<request_holder> cur_request(new request_holder);
-//        cur_request->serverChannel = toserverChannel;
-//        cur_request->stub_ = move(stub_);
-//        cur_request->rpc = move(rpc);
-//        cur_request->tag = tag;
-//        cur_request->status = status;
-//        cur_request->reply_packet = rep
-//
-//        holders.push_back(cur_request);
-//    }
-//
-//    while (reply_server_num <  1 ) {
-//        void *got_tag;
-//        bool ok = false;
-//
-//        GPR_ASSERT(cq.Next(&got_tag, &ok));
-//        GPR_ASSERT(ok);
-//
-//        long tag_num = (long)got_tag;
-//        printf("get tag: %li\n", tag_num);
-//
-//        auto cur_request = holders[tag_num];
-//        if (cur_request->status->ok()) {
-//            cout << "reply serverid:" << cur_request->reply->serverid() << "reply lt (request counter): " << cur_request->reply->lt()<< endl;
-//            reply_server_num += 1;
-//        } else {
-//            cout << "RPC failed " << cur_request->status->error_message() << endl;
-//        }
-//
-//    }
-//
-//    request_counter += 1;
-//    return 0;
-//}
-
 
 /* query is blocked until a majorty server replies. Replies included failure case.
  */
@@ -285,7 +220,7 @@ string Linear_read(string key, int time_wait, int clientID){//clientID is curren
     return value;
 }
 
-int Linear_write(string key, string value_to_update, int time_wait, int clientID){//clientID is current client id not timestamp pair
+int Linear_write(string key, string value_to_update, int clientID, int time_wait){//clientID is current client id not timestamp pair
     stringstream ss;
     ss<<"Linear write  key: "<<key<< " value: "<<value_to_update<<endl;
     //query code
@@ -317,6 +252,46 @@ int Linear_write(string key, string value_to_update, int time_wait, int clientID
     return ret;
 }
 
+void run_test(){
+    string key = "k2";
+    struct Client* abd_clt[NUMBER_OF_CLIENTS];
+    for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
+        abd_clt[i] = new Client;
+        abd_clt[i]->id = i;
+    }
+
+    // Do write operations concurrently
+    std::vector<std::thread*> threads;
+    for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
+
+        // build a random value
+        string value = "v" + to_string(i);
+        // run the thread
+        threads.push_back(new std::thread(Thread_helper::_put, abd_clt[i], key, value));
+    }
+    // Wait for all threads to join
+    for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
+        threads[i]->join();
+    }
+
+    // Do get operations concurrently
+    threads.clear();
+    for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
+
+        // run the thread
+        threads.push_back(new std::thread(Thread_helper::_get, abd_clt[i], key));
+    }
+    // Wait for all threads to join
+    for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
+        threads[i]->join();
+    }
+    // remmeber after using values, delete them to avoid memory leak
+
+    // Clean up allocated memory in struct Client
+    for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
+        delete abd_clt[i];
+    }
+}
 int main(){
     //test code
 //    vector<reply_holder> replies1;
@@ -340,13 +315,13 @@ int main(){
 //    vector<reply_holder> replies5;
 //    query(key1, replies5, 1000, 0);
 
-    string key1 = "k1";
-    Linear_read(key1, 500, 0);
-
-    Linear_read(key1, 500, 0);
-
-    Linear_write(key1, "newValue");
-
-    Linear_read(key1, 500, 0);
+//    string key1 = "k1";
+//    Linear_read(key1, 500, 0);
+//
+//    Linear_read(key1, 500, 0);
+//
+//    Linear_write(key1, "newValue");
+//
+//    Linear_read(key1, 500, 0);
     return 0;
 }

@@ -16,7 +16,7 @@ Status LinearSMImpl::query(ServerContext *context, const QueryRequestPacket *req
         reply_packet.key = request_key;
         reply_packet.value = null_value;
         reply_packet.lt = null_lt;
-        reply_packet.clientID = request_clientID;
+        reply_packet.clientID = null_clientID;
     } else {
         reply_packet.key = request_key;
         reply_packet.lt = it->second.lt;

@@ -32,7 +32,7 @@ std::mutex g_i_mutex; // global lock for query and
 int ServerID = 0;
 string null_value = "00000";
 int null_lt = -1;
-
+int null_clientID = -1;
 struct RequestValue{
     int clientID;
     int lt; //logic time
