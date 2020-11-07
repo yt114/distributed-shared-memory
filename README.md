@@ -46,5 +46,9 @@ Implements shared memory algorithm proposed in [2], which gurantees of concurren
 CM := for each process i, there is a serialization $S_{i}$ of process i local history and all writes operation in system that respects casual order. 
 Reference:
 
+### structure
+OutQueue: A FIFO queue contains write tuple which is <process id, key, value, vector time>
+Inqueue: A priority queue in ascending ordered  of write tuple's vector time 
+
 [1] Sharing memory robustly in message-passing systems. H Attiya, A Bar-Noy, D Dolev. Journal of the ACM 42 (1), 124-142, 1995. 638, 1995.
 [2] Causal memory: definitions, implementation, and programming. 
