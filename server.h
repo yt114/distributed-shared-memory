@@ -19,12 +19,18 @@
 #include "sharedMemory.grpc.pb.h"
 #include <unordered_map>
 #include <mutex>
+#include <deque>
+#include <queue>
+#include <grpc/support/log.h>
+#include <sstream>
 
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
 using grpc::Status;
 using grpc::ServerCompletionQueue;
+using grpc::Channel;
+using grpc::ClientContext;
 using namespace  std;
 
 std::mutex g_i_mutex; // global lock for query and
@@ -51,6 +57,68 @@ public:
     string server_address;
 };
 
-void RunServer(const string& server_address);
+
+int num_server = 3;
+string server_addrs[] = {"localhost:50051",
+                         "localhost:50052",
+                         "localhost:50053"};
+
+struct CMWriteTuple{
+    int process_id;
+    string key;
+    string value;
+    vector<int> message_timestamp;
+
+    CMWriteTuple(int id, string& serckey, string& updatevalue, vector<int>& vt){
+        process_id = id;
+        key = serckey;
+        value = updatevalue;
+        message_timestamp = vt;
+    }
+};
+
+struct CompareWriteTuple{
+public:
+    bool operator() (CMWriteTuple& a, CMWriteTuple& b){// min heap return a < b
+        if (a.message_timestamp.size() != b.message_timestamp.size()){
+            cout<<"error: VT message size are not the same"<<endl;
+            exit(-1);
+        }
+        bool a_greater = false, b_greater = false;
+        int n = a.message_timestamp.size();
+        for (int i=0; i<n; i++) {
+            if (a.message_timestamp[i] != b.message_timestamp[i]) {
+                if (a.message_timestamp[i] < b.message_timestamp[i]) b_greater = true;
+                else a_greater = true;
+            }
+        }
+
+        if (a_greater && ! b_greater) return false;
+        else return true;
+    }
+};
+unordered_map<string, string> cm_cache;
+deque<CMWriteTuple> OutQueue;
+priority_queue<CMWriteTuple, vector<CMWriteTuple>, CompareWriteTuple> InQueue;
+int send_deliver_wait_time = 20; //20ms
+class CMImpl final : public CMReadWrite::Service{
+public:
+    explicit CMImpl(string server_addr, int process_id, int server_num) : server_address(std::move(server_addr)),
+    process_id(process_id), vector_time(server_num, 0){}
+
+    Status cm_client_request(ServerContext* context, const CMClientRequestPacket* request,
+                             CMClientReplyPacket* response) override;
+
+    Status cm_update(::grpc::ServerContext* context, const ::CMUpdatePacket* request, ::CMack* response) override;
+
+    [[noreturn]] void send_thread_func();
+
+    [[noreturn]] void deliver_thread_func();
+
+    string server_address;
+    int process_id;
+    vector<int> vector_time;
+};
+void RunServer(const string& server_address, string& protocol, int serverid=0);
 
 #endif //DISTRIBUTED_SHARED_MEMORY_SERVER_H

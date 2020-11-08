@@ -5,6 +5,11 @@ service LinearReadWrite{
   rpc update(UpdateRequestPacket) returns (ReplyPacket) {}
 }
 
+service CMReadWrite{
+  rpc cm_client_request(CMClientRequestPacket) returns (CMClientReplyPacket) {}
+  rpc cm_update(CMUpdatePacket) returns(CMack){}
+}
+
 message QueryRequestPacket{
   int32 clientID = 1;
   string key = 2;
@@ -26,4 +31,29 @@ message ReplyPacket{
   bool is_success = 5;
   //query rpc, this is always success.
   //for update rpc, this is true when value is updated (i.e larger than server local lt)
+}
+
+
+message CMClientRequestPacket{
+  bool is_write = 1;
+  string key = 2;
+  string value = 3;
+}
+
+message CMClientReplyPacket{
+  bool is_success = 1;
+  string ret_val = 2;
+}
+
+//for server process communication
+message CMUpdatePacket{
+  int32 processID = 1; //from which server process
+  string key = 2;
+  string value = 3;//value to update to server
+  repeated int32 vt = 5;
+}
+
+message CMack{
+  bool is_success = 1;
+  int32 reply_processID = 2;
 }

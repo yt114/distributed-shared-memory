@@ -82,6 +82,11 @@ int update(string& key, string& value, int lt, int clientID,
            int cur_clientID, stringstream& ss);
 
 int query(string& key, vector<reply_holder>& replies, int time_wait, int clientID, stringstream& ss);
+
+
+//CM client side functions
+string cm_read(string& key, int local_process_id);
+
 /* This function will write the value specified in the variable value into the key specified by the variable key.
  * the number of characters expected in key and value are determined by key_size and value_size respectfully.
  *

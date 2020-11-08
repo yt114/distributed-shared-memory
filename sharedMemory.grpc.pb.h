@@ -485,5 +485,464 @@ class LinearReadWrite final {
   typedef WithStreamedUnaryMethod_query<WithStreamedUnaryMethod_update<Service > > StreamedService;
 };
 
+class CMReadWrite final {
+ public:
+  static constexpr char const* service_full_name() {
+    return "CMReadWrite";
+  }
+  class StubInterface {
+   public:
+    virtual ~StubInterface() {}
+    virtual ::grpc::Status cm_client_request(::grpc::ClientContext* context, const ::CMClientRequestPacket& request, ::CMClientReplyPacket* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::CMClientReplyPacket>> Asynccm_client_request(::grpc::ClientContext* context, const ::CMClientRequestPacket& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::CMClientReplyPacket>>(Asynccm_client_requestRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::CMClientReplyPacket>> PrepareAsynccm_client_request(::grpc::ClientContext* context, const ::CMClientRequestPacket& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::CMClientReplyPacket>>(PrepareAsynccm_client_requestRaw(context, request, cq));
+    }
+    virtual ::grpc::Status cm_update(::grpc::ClientContext* context, const ::CMUpdatePacket& request, ::CMack* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::CMack>> Asynccm_update(::grpc::ClientContext* context, const ::CMUpdatePacket& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::CMack>>(Asynccm_updateRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::CMack>> PrepareAsynccm_update(::grpc::ClientContext* context, const ::CMUpdatePacket& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::CMack>>(PrepareAsynccm_updateRaw(context, request, cq));
+    }
+    class experimental_async_interface {
+     public:
+      virtual ~experimental_async_interface() {}
+      virtual void cm_client_request(::grpc::ClientContext* context, const ::CMClientRequestPacket* request, ::CMClientReplyPacket* response, std::function<void(::grpc::Status)>) = 0;
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      virtual void cm_client_request(::grpc::ClientContext* context, const ::CMClientRequestPacket* request, ::CMClientReplyPacket* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      #else
+      virtual void cm_client_request(::grpc::ClientContext* context, const ::CMClientRequestPacket* request, ::CMClientReplyPacket* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      #endif
+      virtual void cm_update(::grpc::ClientContext* context, const ::CMUpdatePacket* request, ::CMack* response, std::function<void(::grpc::Status)>) = 0;
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      virtual void cm_update(::grpc::ClientContext* context, const ::CMUpdatePacket* request, ::CMack* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      #else
+      virtual void cm_update(::grpc::ClientContext* context, const ::CMUpdatePacket* request, ::CMack* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      #endif
+    };
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    typedef class experimental_async_interface async_interface;
+    #endif
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    async_interface* async() { return experimental_async(); }
+    #endif
+    virtual class experimental_async_interface* experimental_async() { return nullptr; }
+  private:
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::CMClientReplyPacket>* Asynccm_client_requestRaw(::grpc::ClientContext* context, const ::CMClientRequestPacket& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::CMClientReplyPacket>* PrepareAsynccm_client_requestRaw(::grpc::ClientContext* context, const ::CMClientRequestPacket& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::CMack>* Asynccm_updateRaw(::grpc::ClientContext* context, const ::CMUpdatePacket& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::CMack>* PrepareAsynccm_updateRaw(::grpc::ClientContext* context, const ::CMUpdatePacket& request, ::grpc::CompletionQueue* cq) = 0;
+  };
+  class Stub final : public StubInterface {
+   public:
+    Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel);
+    ::grpc::Status cm_client_request(::grpc::ClientContext* context, const ::CMClientRequestPacket& request, ::CMClientReplyPacket* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::CMClientReplyPacket>> Asynccm_client_request(::grpc::ClientContext* context, const ::CMClientRequestPacket& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::CMClientReplyPacket>>(Asynccm_client_requestRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::CMClientReplyPacket>> PrepareAsynccm_client_request(::grpc::ClientContext* context, const ::CMClientRequestPacket& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::CMClientReplyPacket>>(PrepareAsynccm_client_requestRaw(context, request, cq));
+    }
+    ::grpc::Status cm_update(::grpc::ClientContext* context, const ::CMUpdatePacket& request, ::CMack* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::CMack>> Asynccm_update(::grpc::ClientContext* context, const ::CMUpdatePacket& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::CMack>>(Asynccm_updateRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::CMack>> PrepareAsynccm_update(::grpc::ClientContext* context, const ::CMUpdatePacket& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::CMack>>(PrepareAsynccm_updateRaw(context, request, cq));
+    }
+    class experimental_async final :
+      public StubInterface::experimental_async_interface {
+     public:
+      void cm_client_request(::grpc::ClientContext* context, const ::CMClientRequestPacket* request, ::CMClientReplyPacket* response, std::function<void(::grpc::Status)>) override;
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      void cm_client_request(::grpc::ClientContext* context, const ::CMClientRequestPacket* request, ::CMClientReplyPacket* response, ::grpc::ClientUnaryReactor* reactor) override;
+      #else
+      void cm_client_request(::grpc::ClientContext* context, const ::CMClientRequestPacket* request, ::CMClientReplyPacket* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      #endif
+      void cm_update(::grpc::ClientContext* context, const ::CMUpdatePacket* request, ::CMack* response, std::function<void(::grpc::Status)>) override;
+      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      void cm_update(::grpc::ClientContext* context, const ::CMUpdatePacket* request, ::CMack* response, ::grpc::ClientUnaryReactor* reactor) override;
+      #else
+      void cm_update(::grpc::ClientContext* context, const ::CMUpdatePacket* request, ::CMack* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      #endif
+     private:
+      friend class Stub;
+      explicit experimental_async(Stub* stub): stub_(stub) { }
+      Stub* stub() { return stub_; }
+      Stub* stub_;
+    };
+    class experimental_async_interface* experimental_async() override { return &async_stub_; }
+
+   private:
+    std::shared_ptr< ::grpc::ChannelInterface> channel_;
+    class experimental_async async_stub_{this};
+    ::grpc::ClientAsyncResponseReader< ::CMClientReplyPacket>* Asynccm_client_requestRaw(::grpc::ClientContext* context, const ::CMClientRequestPacket& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::CMClientReplyPacket>* PrepareAsynccm_client_requestRaw(::grpc::ClientContext* context, const ::CMClientRequestPacket& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::CMack>* Asynccm_updateRaw(::grpc::ClientContext* context, const ::CMUpdatePacket& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::CMack>* PrepareAsynccm_updateRaw(::grpc::ClientContext* context, const ::CMUpdatePacket& request, ::grpc::CompletionQueue* cq) override;
+    const ::grpc::internal::RpcMethod rpcmethod_cm_client_request_;
+    const ::grpc::internal::RpcMethod rpcmethod_cm_update_;
+  };
+  static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
+
+  class Service : public ::grpc::Service {
+   public:
+    Service();
+    virtual ~Service();
+    virtual ::grpc::Status cm_client_request(::grpc::ServerContext* context, const ::CMClientRequestPacket* request, ::CMClientReplyPacket* response);
+    virtual ::grpc::Status cm_update(::grpc::ServerContext* context, const ::CMUpdatePacket* request, ::CMack* response);
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_cm_client_request : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_cm_client_request() {
+      ::grpc::Service::MarkMethodAsync(0);
+    }
+    ~WithAsyncMethod_cm_client_request() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status cm_client_request(::grpc::ServerContext* /*context*/, const ::CMClientRequestPacket* /*request*/, ::CMClientReplyPacket* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void Requestcm_client_request(::grpc::ServerContext* context, ::CMClientRequestPacket* request, ::grpc::ServerAsyncResponseWriter< ::CMClientReplyPacket>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_cm_update : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_cm_update() {
+      ::grpc::Service::MarkMethodAsync(1);
+    }
+    ~WithAsyncMethod_cm_update() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status cm_update(::grpc::ServerContext* /*context*/, const ::CMUpdatePacket* /*request*/, ::CMack* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void Requestcm_update(::grpc::ServerContext* context, ::CMUpdatePacket* request, ::grpc::ServerAsyncResponseWriter< ::CMack>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_cm_client_request<WithAsyncMethod_cm_update<Service > > AsyncService;
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_cm_client_request : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithCallbackMethod_cm_client_request() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodCallback(0,
+          new ::grpc::internal::CallbackUnaryHandler< ::CMClientRequestPacket, ::CMClientReplyPacket>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context, const ::CMClientRequestPacket* request, ::CMClientReplyPacket* response) { return this->cm_client_request(context, request, response); }));}
+    void SetMessageAllocatorFor_cm_client_request(
+        ::grpc::experimental::MessageAllocator< ::CMClientRequestPacket, ::CMClientReplyPacket>* allocator) {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(0);
+    #else
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(0);
+    #endif
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::CMClientRequestPacket, ::CMClientReplyPacket>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~ExperimentalWithCallbackMethod_cm_client_request() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status cm_client_request(::grpc::ServerContext* /*context*/, const ::CMClientRequestPacket* /*request*/, ::CMClientReplyPacket* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerUnaryReactor* cm_client_request(
+      ::grpc::CallbackServerContext* /*context*/, const ::CMClientRequestPacket* /*request*/, ::CMClientReplyPacket* /*response*/)
+    #else
+    virtual ::grpc::experimental::ServerUnaryReactor* cm_client_request(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::CMClientRequestPacket* /*request*/, ::CMClientReplyPacket* /*response*/)
+    #endif
+      { return nullptr; }
+  };
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_cm_update : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithCallbackMethod_cm_update() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::CMUpdatePacket, ::CMack>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context, const ::CMUpdatePacket* request, ::CMack* response) { return this->cm_update(context, request, response); }));}
+    void SetMessageAllocatorFor_cm_update(
+        ::grpc::experimental::MessageAllocator< ::CMUpdatePacket, ::CMack>* allocator) {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+    #else
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(1);
+    #endif
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::CMUpdatePacket, ::CMack>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~ExperimentalWithCallbackMethod_cm_update() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status cm_update(::grpc::ServerContext* /*context*/, const ::CMUpdatePacket* /*request*/, ::CMack* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerUnaryReactor* cm_update(
+      ::grpc::CallbackServerContext* /*context*/, const ::CMUpdatePacket* /*request*/, ::CMack* /*response*/)
+    #else
+    virtual ::grpc::experimental::ServerUnaryReactor* cm_update(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::CMUpdatePacket* /*request*/, ::CMack* /*response*/)
+    #endif
+      { return nullptr; }
+  };
+  #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+  typedef ExperimentalWithCallbackMethod_cm_client_request<ExperimentalWithCallbackMethod_cm_update<Service > > CallbackService;
+  #endif
+
+  typedef ExperimentalWithCallbackMethod_cm_client_request<ExperimentalWithCallbackMethod_cm_update<Service > > ExperimentalCallbackService;
+  template <class BaseClass>
+  class WithGenericMethod_cm_client_request : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_cm_client_request() {
+      ::grpc::Service::MarkMethodGeneric(0);
+    }
+    ~WithGenericMethod_cm_client_request() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status cm_client_request(::grpc::ServerContext* /*context*/, const ::CMClientRequestPacket* /*request*/, ::CMClientReplyPacket* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_cm_update : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_cm_update() {
+      ::grpc::Service::MarkMethodGeneric(1);
+    }
+    ~WithGenericMethod_cm_update() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status cm_update(::grpc::ServerContext* /*context*/, const ::CMUpdatePacket* /*request*/, ::CMack* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_cm_client_request : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_cm_client_request() {
+      ::grpc::Service::MarkMethodRaw(0);
+    }
+    ~WithRawMethod_cm_client_request() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status cm_client_request(::grpc::ServerContext* /*context*/, const ::CMClientRequestPacket* /*request*/, ::CMClientReplyPacket* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void Requestcm_client_request(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_cm_update : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_cm_update() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_cm_update() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status cm_update(::grpc::ServerContext* /*context*/, const ::CMUpdatePacket* /*request*/, ::CMack* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void Requestcm_update(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_cm_client_request : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithRawCallbackMethod_cm_client_request() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodRawCallback(0,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->cm_client_request(context, request, response); }));
+    }
+    ~ExperimentalWithRawCallbackMethod_cm_client_request() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status cm_client_request(::grpc::ServerContext* /*context*/, const ::CMClientRequestPacket* /*request*/, ::CMClientReplyPacket* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerUnaryReactor* cm_client_request(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #else
+    virtual ::grpc::experimental::ServerUnaryReactor* cm_client_request(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #endif
+      { return nullptr; }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_cm_update : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithRawCallbackMethod_cm_update() {
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+      ::grpc::Service::
+    #else
+      ::grpc::Service::experimental().
+    #endif
+        MarkMethodRawCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+                   ::grpc::CallbackServerContext*
+    #else
+                   ::grpc::experimental::CallbackServerContext*
+    #endif
+                     context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->cm_update(context, request, response); }));
+    }
+    ~ExperimentalWithRawCallbackMethod_cm_update() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status cm_update(::grpc::ServerContext* /*context*/, const ::CMUpdatePacket* /*request*/, ::CMack* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
+    virtual ::grpc::ServerUnaryReactor* cm_update(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #else
+    virtual ::grpc::experimental::ServerUnaryReactor* cm_update(
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)
+    #endif
+      { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_cm_client_request : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_cm_client_request() {
+      ::grpc::Service::MarkMethodStreamed(0,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::CMClientRequestPacket, ::CMClientReplyPacket>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::CMClientRequestPacket, ::CMClientReplyPacket>* streamer) {
+                       return this->Streamedcm_client_request(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_cm_client_request() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status cm_client_request(::grpc::ServerContext* /*context*/, const ::CMClientRequestPacket* /*request*/, ::CMClientReplyPacket* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status Streamedcm_client_request(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::CMClientRequestPacket,::CMClientReplyPacket>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_cm_update : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_cm_update() {
+      ::grpc::Service::MarkMethodStreamed(1,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::CMUpdatePacket, ::CMack>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::CMUpdatePacket, ::CMack>* streamer) {
+                       return this->Streamedcm_update(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_cm_update() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status cm_update(::grpc::ServerContext* /*context*/, const ::CMUpdatePacket* /*request*/, ::CMack* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status Streamedcm_update(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::CMUpdatePacket,::CMack>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_cm_client_request<WithStreamedUnaryMethod_cm_update<Service > > StreamedUnaryService;
+  typedef Service SplitStreamedService;
+  typedef WithStreamedUnaryMethod_cm_client_request<WithStreamedUnaryMethod_cm_update<Service > > StreamedService;
+};
+
 
 #endif  // GRPC_sharedMemory_2eproto__INCLUDED

@@ -252,6 +252,65 @@ int Linear_write(string key, string value_to_update, int clientID, int time_wait
     return ret;
 }
 
+string cm_read(string& key, int local_process_id){
+    stringstream ss;
+    ss<<"Linear read on key "<<key<<endl;
+    shared_ptr<Channel> toserverChannel = grpc::CreateChannel(server_addrs[local_process_id],
+                                                              grpc::InsecureChannelCredentials());
+    unique_ptr<CMReadWrite::Stub> stub_ = CMReadWrite::NewStub(toserverChannel);
+
+    CMClientRequestPacket request; CMClientReplyPacket reply; ClientContext context;
+    request.set_is_write(false);
+    request.set_key(key);
+    request.set_value(null_value);
+
+    Status status = stub_->cm_client_request(&context, request, &reply);
+    if (status.ok()){
+        ss<<"get return value: "<<reply.ret_val()<<endl;
+    }
+
+    ss<<" cm read finishes"<<endl;
+
+    ss<<"---------------------------------------------------------------------"<<endl;
+    cout<<ss.str()<<endl;
+
+    return reply.ret_val();
+}
+
+string cm_write(string& key, string& value, int local_process_id){
+    stringstream ss;
+    ss<<"Linear write on key "<<key<<endl;
+    shared_ptr<Channel> toserverChannel = grpc::CreateChannel(server_addrs[local_process_id],
+                                                              grpc::InsecureChannelCredentials());
+    unique_ptr<CMReadWrite::Stub> stub_ = CMReadWrite::NewStub(toserverChannel);
+
+    CMClientRequestPacket request; CMClientReplyPacket reply; ClientContext context;
+    request.set_is_write(true);
+    request.set_key(key);
+    request.set_value(value);
+
+    Status status = stub_->cm_client_request(&context, request, &reply);
+    if (status.ok()){
+        ss<<"get return value: "<<reply.ret_val()<<endl;
+    }
+
+    ss<<" cm write finishes"<<endl;
+
+    ss<<"---------------------------------------------------------------------"<<endl;
+    cout<<ss.str()<<endl;
+
+    return reply.ret_val();
+}
+
+
+void run_cm_test(){
+    string key = "key1"; string value = "v1";
+    int local_id = 0;
+    cm_read(key, local_id);
+
+    cm_write(key, value, local_id);
+}
+
 void run_test(){
     string key = "k2";
     struct Client* abd_clt[NUMBER_OF_CLIENTS];
@@ -292,7 +351,8 @@ void run_test(){
         delete abd_clt[i];
     }
 }
-int main(){
+
+int main(int argc, char** argv){
     //test code
 //    vector<reply_holder> replies1;
 //    string key1 = "k1";
@@ -323,5 +383,9 @@ int main(){
 //    Linear_write(key1, "newValue");
 //
 //    Linear_read(key1, 500, 0);
+
+    run_cm_test();
+
+
     return 0;
 }

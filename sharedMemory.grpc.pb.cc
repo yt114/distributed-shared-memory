@@ -123,3 +123,106 @@ LinearReadWrite::Service::~Service() {
 }
 
 
+static const char* CMReadWrite_method_names[] = {
+  "/CMReadWrite/cm_client_request",
+  "/CMReadWrite/cm_update",
+};
+
+std::unique_ptr< CMReadWrite::Stub> CMReadWrite::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
+  (void)options;
+  std::unique_ptr< CMReadWrite::Stub> stub(new CMReadWrite::Stub(channel));
+  return stub;
+}
+
+CMReadWrite::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
+  : channel_(channel), rpcmethod_cm_client_request_(CMReadWrite_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_cm_update_(CMReadWrite_method_names[1], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  {}
+
+::grpc::Status CMReadWrite::Stub::cm_client_request(::grpc::ClientContext* context, const ::CMClientRequestPacket& request, ::CMClientReplyPacket* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_cm_client_request_, context, request, response);
+}
+
+void CMReadWrite::Stub::experimental_async::cm_client_request(::grpc::ClientContext* context, const ::CMClientRequestPacket* request, ::CMClientReplyPacket* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_cm_client_request_, context, request, response, std::move(f));
+}
+
+void CMReadWrite::Stub::experimental_async::cm_client_request(::grpc::ClientContext* context, const ::CMClientRequestPacket* request, ::CMClientReplyPacket* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_cm_client_request_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::CMClientReplyPacket>* CMReadWrite::Stub::PrepareAsynccm_client_requestRaw(::grpc::ClientContext* context, const ::CMClientRequestPacket& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::CMClientReplyPacket>::Create(channel_.get(), cq, rpcmethod_cm_client_request_, context, request, false);
+}
+
+::grpc::ClientAsyncResponseReader< ::CMClientReplyPacket>* CMReadWrite::Stub::Asynccm_client_requestRaw(::grpc::ClientContext* context, const ::CMClientRequestPacket& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsynccm_client_requestRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status CMReadWrite::Stub::cm_update(::grpc::ClientContext* context, const ::CMUpdatePacket& request, ::CMack* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_cm_update_, context, request, response);
+}
+
+void CMReadWrite::Stub::experimental_async::cm_update(::grpc::ClientContext* context, const ::CMUpdatePacket* request, ::CMack* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_cm_update_, context, request, response, std::move(f));
+}
+
+void CMReadWrite::Stub::experimental_async::cm_update(::grpc::ClientContext* context, const ::CMUpdatePacket* request, ::CMack* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_cm_update_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::CMack>* CMReadWrite::Stub::PrepareAsynccm_updateRaw(::grpc::ClientContext* context, const ::CMUpdatePacket& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::CMack>::Create(channel_.get(), cq, rpcmethod_cm_update_, context, request, false);
+}
+
+::grpc::ClientAsyncResponseReader< ::CMack>* CMReadWrite::Stub::Asynccm_updateRaw(::grpc::ClientContext* context, const ::CMUpdatePacket& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsynccm_updateRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+CMReadWrite::Service::Service() {
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      CMReadWrite_method_names[0],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< CMReadWrite::Service, ::CMClientRequestPacket, ::CMClientReplyPacket>(
+          [](CMReadWrite::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::CMClientRequestPacket* req,
+             ::CMClientReplyPacket* resp) {
+               return service->cm_client_request(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      CMReadWrite_method_names[1],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< CMReadWrite::Service, ::CMUpdatePacket, ::CMack>(
+          [](CMReadWrite::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::CMUpdatePacket* req,
+             ::CMack* resp) {
+               return service->cm_update(ctx, req, resp);
+             }, this)));
+}
+
+CMReadWrite::Service::~Service() {
+}
+
+::grpc::Status CMReadWrite::Service::cm_client_request(::grpc::ServerContext* context, const ::CMClientRequestPacket* request, ::CMClientReplyPacket* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status CMReadWrite::Service::cm_update(::grpc::ServerContext* context, const ::CMUpdatePacket* request, ::CMack* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+
