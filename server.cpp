@@ -154,6 +154,9 @@ Status CMImpl::cm_update(::grpc::ServerContext *context, const ::CMUpdatePacket 
     }
     cout<<"add new packet to inqueue size now is "<<InQueue.size()<<endl;
     cout<<endl;
+
+    response->set_is_success(true);
+    response->set_reply_processid(process_id);
     return Status::OK;
 }
 
@@ -184,12 +187,11 @@ void send_to_server(string& server_addr, CMWriteTuple& writetuple, stringstream&
 [[noreturn]] void CMImpl::send_thread_func() {
     while (true) {
         std::unique_lock<std::mutex> lock(g_i_mutex);
-        cout << " send wake up !" << endl;
+        //cout << " send wake up !" << endl;
         while (!OutQueue.empty()) {
             stringstream ss;
             CMWriteTuple packet = OutQueue.front();
             OutQueue.pop_front();
-
 
             ss << " cm update on key: " << packet.key << " new value: " << packet.value << endl;
             cout << "[";
@@ -208,7 +210,7 @@ void send_to_server(string& server_addr, CMWriteTuple& writetuple, stringstream&
         }
 
         lock.unlock();
-        cout << "send put into sleep and unlock !" << endl;
+        //cout << "send put into sleep and unlock !" << endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(send_deliver_wait_time));
     }
 
@@ -217,7 +219,7 @@ void send_to_server(string& server_addr, CMWriteTuple& writetuple, stringstream&
 [[noreturn]] void CMImpl::deliver_thread_func() {
     while (true) {
         std::unique_lock<std::mutex> lock(g_i_mutex);
-        cout << "deliver send wake up !" << endl;
+        //cout << "deliver send wake up !" << endl;
         bool prev_delivered = true;
 
         while (!InQueue.empty() && prev_delivered) {
@@ -250,7 +252,7 @@ void send_to_server(string& server_addr, CMWriteTuple& writetuple, stringstream&
         }
 
         lock.unlock();
-        cout << "deliver put into sleep and unlock !" << endl;
+        //cout << "deliver put into sleep and unlock !" << endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(send_deliver_wait_time));
     }
 

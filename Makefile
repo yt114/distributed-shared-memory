@@ -28,7 +28,7 @@ all: system-check server client
 server: sharedMemory.pb.o sharedMemory.grpc.pb.o server.o
 	$(CXX) $^ $(LDFLAGS) -o $@
 
-client: sharedMemory.pb.o sharedMemory.grpc.pb.o client.o
+client: sharedMemory.pb.o sharedMemory.grpc.pb.o client.o userprogram.o
 	$(CXX) $^ $(LDFLAGS) -o $@
 
 .PRECIOUS: %.grpc.pb.cc

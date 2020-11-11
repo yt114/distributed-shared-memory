@@ -4,15 +4,17 @@
 
 #include "client.h"
 
-
+static const std::chrono::high_resolution_clock::time_point beginTime = high_resolution_clock::now();
+static string null_value = "00000";
+static int null_lt = -1;
 /* query is blocked until a majorty server replies. Replies included failure case.
  */
-int query(string& key, vector<reply_holder>& replies, int time_wait, int clientID, stringstream& ss){
+int query(const struct Client* c, string& key, vector<reply_holder>& replies, int time_wait, stringstream& ss){
     CompletionQueue cq;
     vector<shared_ptr<request_holder>> holders;
     int reply_server_num = 0;
     int sucess_server_reply_num = 0;
-
+    int server_num = c->number_of_servers;
     //asychronisedly sent Query packet to all servers
     for (int i=0; i<server_num; i++) {
         ClientContext context;
@@ -22,11 +24,15 @@ int query(string& key, vector<reply_holder>& replies, int time_wait, int clientI
         auto status = new Status;
         auto reply_packet = new ReplyPacket;
 
-        shared_ptr<Channel> toserverChannel = grpc::CreateChannel(server_addrs[i],
+        string server_addr(c->servers[i].ip);
+        server_addr += ":" + to_string(c->servers[i].port);
+
+        cout<<"server addr:" << server_addr<<endl;
+        shared_ptr<Channel> toserverChannel = grpc::CreateChannel(server_addr,
                                                                   grpc::InsecureChannelCredentials());
         unique_ptr<LinearReadWrite::Stub> stub_ = LinearReadWrite::NewStub(toserverChannel);
 
-        request_packet.set_clientid(clientID);//current client ID for debug
+        request_packet.set_clientid(c->id);//current client ID for debug
         request_packet.set_key(key);
 
 //        chrono::system_clock::time_point deadline =
@@ -85,20 +91,20 @@ int query(string& key, vector<reply_holder>& replies, int time_wait, int clientI
         }
         reply_server_num += 1;
     }
-    request_counter += 1;
+
     //error checking
     if (sucess_server_reply_num < server_num / 2 + 1) return -1;
     else return 0;
 }
 
-int update(string& key, string& value, int lt, int clientID,
-           vector<reply_holder>& replies, int time_wait,
-           int cur_clientID, stringstream& ss){
+int update(const struct Client* c, string& key, string& value, int lt, int clientID,
+           vector<reply_holder>& replies, int time_wait, stringstream& ss){
     CompletionQueue cq;
     vector<shared_ptr<request_holder>> holders;
     int reply_server_num = 0;
     int sucess_server_reply_num = 0;
-
+    int server_num = c->number_of_servers;
+    int cur_clientID = c->id;
 
     //asychronisedly sent Query packet to all servers
     for (int i=0; i<server_num; i++) {
@@ -109,7 +115,10 @@ int update(string& key, string& value, int lt, int clientID,
         auto status = new Status;
         auto reply_packet = new ReplyPacket;
 
-        shared_ptr<Channel> toserverChannel = grpc::CreateChannel(server_addrs[i],
+        string server_addr(c->servers[i].ip);
+        server_addr += ":" + to_string(c->servers[i].port);
+        cout<<server_addr<<endl;
+        shared_ptr<Channel> toserverChannel = grpc::CreateChannel(server_addr,
                                                                   grpc::InsecureChannelCredentials());
         unique_ptr<LinearReadWrite::Stub> stub_ = LinearReadWrite::NewStub(toserverChannel);
 
@@ -155,7 +164,6 @@ int update(string& key, string& value, int lt, int clientID,
         ss<<" current thread id "<<this_thread::get_id();
         ss<<" update get tag: "<<tag_num<<" for key: "<<key<<endl;
 
-
         auto cur_request = holders[tag_num];
         if (cur_request->status->ok()) {
             ss<<" reply serverid: " << cur_request->reply_packet->serverid();
@@ -179,20 +187,20 @@ int update(string& key, string& value, int lt, int clientID,
         reply_server_num += 1;
     }
 
-    request_counter += 1;
     //error checking
     if (sucess_server_reply_num < server_num / 2 + 1) return -1;
     else return 0;
 }
 
-string Linear_read(string key, int time_wait, int clientID){//clientID is current client id not timestamp pair
+string Linear_read(const struct Client* c, string key, int time_wait){//clientID is current client id not timestamp pair
     //query code
+    int clientID = c->id;
     stringstream ss;
     ss<<"Linear read on key "<<key<<endl;
     int ret, time_lt = -1, time_clientID = -1;
     string value;
     vector<reply_holder> replies;
-    ret = query(key, replies, time_wait, clientID, ss);
+    ret = query(c, key, replies, time_wait, ss);
     if (ret < 0) {
         ss<<" thread id "<< this_thread::get_id() << "  fails at linear_read query" << endl;
     }
@@ -208,7 +216,7 @@ string Linear_read(string key, int time_wait, int clientID){//clientID is curren
     //update
     if (value != null_value) {
         vector<reply_holder> update_replies;
-        ret = update(key, value, time_lt, time_clientID, update_replies, time_wait, clientID, ss);
+        ret = update(c, key, value, time_lt, time_clientID, update_replies, time_wait,  ss);
         if (ret < 0) {
             ss<< " thread id " << this_thread::get_id() << "  fails at linear_read update" << endl;
         }
@@ -220,14 +228,14 @@ string Linear_read(string key, int time_wait, int clientID){//clientID is curren
     return value;
 }
 
-int Linear_write(string key, string value_to_update, int clientID, int time_wait){//clientID is current client id not timestamp pair
+int Linear_write(const struct Client* c, string key, string value_to_update, int time_wait){//clientID is current client id not timestamp pair
     stringstream ss;
     ss<<"Linear write  key: "<<key<< " value: "<<value_to_update<<endl;
     //query code
     int ret, time_lt = -1, time_clientID = -1;
     string old_value;
     vector<reply_holder> replies;
-    ret = query(key, replies, time_wait, clientID, ss);
+    ret = query(c, key, replies, time_wait,  ss);
     if (ret < 0) {
         cout<<" thread id "<< this_thread::get_id() << "  fails at linear_write_query" << endl;
     }
@@ -242,7 +250,7 @@ int Linear_write(string key, string value_to_update, int clientID, int time_wait
     ss<<" get old time ("<<time_lt<<", "<<time_clientID<<")" << " value: "<< old_value;
     //update
     vector<reply_holder> update_replies;
-    ret = update(key, value_to_update, time_lt+1, clientID, update_replies, time_wait, clientID, ss);
+    ret = update(c, key, value_to_update, time_lt+1, c->id, update_replies, time_wait, ss);
     if (ret < 0) {
         cout<<" thread id "<< this_thread::get_id() << "  fails at linear_write update" << endl;
     }
@@ -252,10 +260,16 @@ int Linear_write(string key, string value_to_update, int clientID, int time_wait
     return ret;
 }
 
-string cm_read(string& key, int local_process_id){
+string cm_read(const struct Client* c, string& key){
     stringstream ss;
     ss<<"Linear read on key "<<key<<endl;
-    shared_ptr<Channel> toserverChannel = grpc::CreateChannel(server_addrs[local_process_id],
+
+    int local_process_id = c->id;
+    string server_addr(c->servers[local_process_id].ip);
+    server_addr += ":" + to_string(c->servers[local_process_id].port);
+
+    cout<<server_addr<<endl;
+    shared_ptr<Channel> toserverChannel = grpc::CreateChannel(server_addr,
                                                               grpc::InsecureChannelCredentials());
     unique_ptr<CMReadWrite::Stub> stub_ = CMReadWrite::NewStub(toserverChannel);
 
@@ -277,10 +291,16 @@ string cm_read(string& key, int local_process_id){
     return reply.ret_val();
 }
 
-string cm_write(string& key, string& value, int local_process_id){
+string cm_write(const struct Client* c, string& key, string& value){
     stringstream ss;
     ss<<"Linear write on key "<<key<<endl;
-    shared_ptr<Channel> toserverChannel = grpc::CreateChannel(server_addrs[local_process_id],
+
+    int local_process_id = c->id;
+    string server_addr(c->servers[local_process_id].ip);
+    server_addr += ":" + to_string(c->servers[local_process_id].port);
+
+    cout<<server_addr<<endl;
+    shared_ptr<Channel> toserverChannel = grpc::CreateChannel(server_addr,
                                                               grpc::InsecureChannelCredentials());
     unique_ptr<CMReadWrite::Stub> stub_ = CMReadWrite::NewStub(toserverChannel);
 
@@ -302,6 +322,120 @@ string cm_write(string& key, string& value, int local_process_id){
     return reply.ret_val();
 }
 
+struct Client* client_instance(const uint32_t id, const char* protocol,
+                               const struct Server_info* servers, uint32_t number_of_servers){
+    auto ret_client = new Client;
+    ret_client->id = id;
+    strcpy(ret_client->protocol, protocol);
+    ret_client->servers = servers;
+    ret_client->number_of_servers = number_of_servers;
+    return ret_client;
+}
+
+int client_delete(struct Client* c){
+    delete c;
+    return 0;
+};
+
+int put(const struct Client* c, const char* key, uint32_t key_size, const char* value, uint32_t value_size){
+    std::ofstream logfile;
+    stringstream temp;
+
+    string updateKey;
+    for (int i=0; i<key_size; i++){
+        updateKey += key[i];
+    }
+
+    string updateValue;
+    //copy value not ended in \0
+    for (int i=0; i<value_size; i++){
+        updateValue += value[i];
+    }
+
+    char logfilename[30];
+    duration<double> currentTime_span;
+    sprintf(logfilename, "log_%d.txt", c->id);
+    logfile.open(logfilename, std::ofstream::out | std::ofstream::app);
+
+    currentTime_span = duration_cast<duration<double>>( high_resolution_clock::now() - beginTime);
+    logfile<< currentTime_span.count() <<" {:process "<< c->id << ", :type :invoke, "
+           << ":f :write, " << ":value " << updateValue <<"}"<<std::endl;
+    if (!strcmp(c->protocol, "ABD")) {
+        Linear_write(c, updateKey, updateValue);
+    } else {
+        cm_write(c, updateKey, updateValue);
+    }
+    currentTime_span = duration_cast<duration<double>>( high_resolution_clock::now() - beginTime);
+    logfile<< currentTime_span.count() <<" {:process "<< c->id << ", :type :ok, "
+           << ":f :write, " << ":value " << updateValue <<"}"<<std::endl;
+    return 0;
+}
+
+int get(const struct Client* c, const char* key, uint32_t key_size, char** value, uint32_t *value_size){
+    string updateKey;
+    for (int i=0; i<key_size; i++){
+        updateKey += key[i];
+    }
+
+    std::ofstream logfile;
+    char logfilename[30];
+    duration<double> currentTime_span;
+    sprintf(logfilename, "log_%d.txt", c->id);
+    logfile.open(logfilename, std::ofstream::out | std::ofstream::app);
+
+    currentTime_span = duration_cast<duration<double>>( high_resolution_clock::now() - beginTime);
+    logfile<< currentTime_span.count() <<" {:process "<< c->id << ", :type :invoke, "
+    << ":f :read," << " :value nil}" << std::endl;
+    string ret_value;
+    if (!strcmp(c->protocol, "ABD")) {
+        ret_value = Linear_read(c, updateKey);
+    } else{
+        ret_value = cm_read(c, updateKey);
+    }
+    currentTime_span = duration_cast<duration<double>>( high_resolution_clock::now() - beginTime);
+    logfile<< currentTime_span.count() <<" {:process "<< c->id << ", :type :ok, "
+           << ":f :read,"  << " :value " <<ret_value<<"}"<< std::endl;
+    *value_size = ret_value.size() + 1;
+    char * c_val = new char[*value_size];
+    strcpy(c_val, ret_value.c_str());
+    *value = c_val;
+
+    return 0;
+}
+
+//following are testcodes
+/*
+ *
+int server_num = 3;
+string server_addrs[] = {"localhost:50051",
+                          "localhost:50052",
+                          "localhost:50053"};
+
+namespace Thread_helper{
+    void _put(const struct Client* c, string key, string value){
+
+        int status = put(c, key, value);
+
+        if(status == 0){ // Success
+            return;
+        }
+        else{
+            exit(-1);
+        }
+    }
+
+    void _get(const struct Client* c, string key){
+
+        int status = get(c, key);
+
+        if(status == 0){ // Success
+            return;
+        }
+        else{
+            exit(-1);
+        }
+    }
+}
 
 void run_cm_test(){
     string key = "key1"; string value = "v1";
@@ -309,6 +443,10 @@ void run_cm_test(){
     cm_read(key, local_id);
 
     cm_write(key, value, local_id);
+
+    string key2 = "key2", value2 = "v2";
+    cm_write(key2, value2, local_id);
+    cm_read(key2, local_id);
 }
 
 void run_test(){
@@ -383,9 +521,10 @@ int main(int argc, char** argv){
 //    Linear_write(key1, "newValue");
 //
 //    Linear_read(key1, 500, 0);
-
-    run_cm_test();
-
-
-    return 0;
+//
+//    run_cm_test();
+//
+//
+//    return 0;
 }
+ */

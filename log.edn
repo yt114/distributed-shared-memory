@@ -1,0 +1,12 @@
+{:process 0, :type :invoke, :f :write, :value 36}
+{:process 1, :type :invoke, :f :write, :value 75}
+{:process 2, :type :invoke, :f :write, :value 35}
+{:process 2, :type :ok, :f :write, :value 35}
+{:process 1, :type :ok, :f :write, :value 75}
+{:process 0, :type :ok, :f :write, :value 36}
+{:process 0, :type :invoke, :f :read, :value nil}
+{:process 1, :type :invoke, :f :read, :value nil}
+{:process 2, :type :invoke, :f :read, :value nil}
+{:process 0, :type :ok, :f :read, :value 35}
+{:process 2, :type :ok, :f :read, :value 35}
+{:process 1, :type :ok, :f :read, :value 35}
