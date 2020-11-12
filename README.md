@@ -42,7 +42,14 @@ correstness gurantees: linearlizability is composable.
 ##testing 
 ### Correstness
 Here, number of servers is set as 3. The client process forks three concurrent threads performs mixed put (i.e. write(key)) and get (read a keys value) and such operation are repeated for mutiple rounds. Each thread is uniquely identified by client id. This step generates some log{client id}.txt files which are threads' local history which consists of time of operations' invoke and finish. They local histories are merged into a global history manually according to the time. Note these client threads are run on a single machine such that no clock drifting issue is concerned. 
-[linear!](https://github.com/jepsen-io/knossos)
+
+
+[knossos!](https://github.com/jepsen-io/knossos) available on github is used to check whether a history file log.edn is linearizable or not by running:
+
+```bash
+  lein run --model cas-register <log.edn>
+```
+There are some logs generated in testcase/linear_logs/ which pass checking. 
 
 ## Casual order shared memory
 Implements shared memory algorithm proposed in [2], which gurantees of concurrent operations' causal order and non-blocking property.
