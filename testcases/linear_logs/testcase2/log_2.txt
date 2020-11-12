@@ -1,0 +1,6 @@
+0.000472135 {:process 2, :type :invoke, :f :write, :value 35}
+0.00733201 {:process 2, :type :ok, :f :write, :value 35}
+0.00751787 {:process 2, :type :invoke, :f :read, :value nil}
+0.0108536 {:process 2, :type :ok, :f :read, :value 35}
+0.0119352 {:process 2, :type :invoke, :f :read, :value nil}
+0.0136496 {:process 2, :type :ok, :f :read, :value 62}

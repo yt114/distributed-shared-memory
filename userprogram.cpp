@@ -104,16 +104,44 @@ int main(int argc, char* argv[]){
 		char* values[NUMBER_OF_CLIENTS];
 		uint32_t value_sizes[NUMBER_OF_CLIENTS];
 		for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
-			
-			// run the thread
-			threads.push_back(new std::thread(Thread_helper::_get, abd_clt[i], key, sizeof(key), &values[i], &value_sizes[i]));
-	    }
+			if (i == 1){
+                for(int j = 0; j < SIZE_OF_VALUE; j++){
+                    wvalues[i][j] = '0' + rand() % 10;
+                }
+                threads.push_back(new std::thread(Thread_helper::_put, abd_clt[i], key, sizeof(key), wvalues[i], sizeof(wvalues[i])));
+			} else {
+                // run the thread
+                threads.push_back(new std::thread(Thread_helper::_get, abd_clt[i], key, sizeof(key), &values[i],
+                                                  &value_sizes[i]));
+			}
+		}
 	    // Wait for all threads to join
 	    for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
 	    	threads[i]->join();
+	    	if (i != 1) delete values[i];
 	    }
 	    // remmeber after using values, delete them to avoid memory leak
 
+
+
+        threads.clear();
+        for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
+            if (i == 0){
+                for(int j = 0; j < SIZE_OF_VALUE; j++){
+                    wvalues[i][j] = '0' + rand() % 10;
+                }
+                threads.push_back(new std::thread(Thread_helper::_put, abd_clt[i], key, sizeof(key), wvalues[i], sizeof(wvalues[i])));
+            } else {
+                // run the thread
+                threads.push_back(new std::thread(Thread_helper::_get, abd_clt[i], key, sizeof(key), &values[i],
+                                                  &value_sizes[i]));
+            }
+        }
+        // Wait for all threads to join
+        for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
+            threads[i]->join();
+            if (i != 0) delete values[i];
+        }
 		// Clean up allocated memory in struct Client
 		for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
 			if(client_delete(abd_clt[i]) == -1){
