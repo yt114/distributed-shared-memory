@@ -49,7 +49,7 @@ Here, number of servers is set as 3. The client process forks three concurrent t
 ```bash
   lein run --model cas-register <log.edn>
 ```
-There are some logs generated in testcase/linear_logs/ which pass checking. 
+There are some logs generated in `testcase/linear_logs/` which pass checking. 
 
 ## Casual order shared memory
 Implements shared memory algorithm proposed in [2], which gurantees of concurrent operations' causal order and non-blocking property.
