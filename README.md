@@ -56,6 +56,7 @@ There are some logs generated in `testcase/linear_logs/` which pass checking.
 |---------|-----------------------|--------|--------|--------|
 | 3       | average latency (sec) | 0.3445 | 0.3464 | 0.3465 |
 | 5       | average latency (sec) | 8.1   | 8.12  | 8.11  |
+
 This performace is to test client average request time connecting to these five servers spread in different area: 1.us−east, 2.us−central, 3.europe−west, 4. asia −east 5. europe−north. 
 
 When server number is 3, 1.us−east, 2.us−central, 3.europe−west are used. 
