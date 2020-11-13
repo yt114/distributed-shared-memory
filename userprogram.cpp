@@ -17,14 +17,17 @@
 
 typedef unsigned int uint;
 
-#define NUMBER_OF_CLIENTS 	3
+#define NUMBER_OF_CLIENTS 	1
 #define SIZE_OF_VALUE 		2
+
+
+int rwratio = 5; //read/write
 
 // Define your server information here
 static struct Server_info servers[] = {
-		{"127.0.0.1", 50051},
-		{"127.0.0.1", 50052},
-		{"127.0.0.1", 50053}};
+		{"34.74.163.238", 50051},
+		{"34.72.157.165", 50052},
+		{"34.96.159.169", 50053}};
 
 static char key[] = "key1"; // We only have one key in this userprogram
 
@@ -58,6 +61,41 @@ namespace Thread_helper{
 	}
 }
 
+void run_test_performance(struct Client* abd_clt[]){
+    std::vector<std::thread *> threads;
+
+    // Do write operations concurrently
+
+    char wvalues[NUMBER_OF_CLIENTS][SIZE_OF_VALUE];
+    bool isread[NUMBER_OF_CLIENTS];
+    char *values[NUMBER_OF_CLIENTS];
+    uint32_t value_sizes[NUMBER_OF_CLIENTS];
+
+    for (uint i = 0; i < NUMBER_OF_CLIENTS; i++) {
+
+        // build a random value
+        int rv = rand() % 10;
+        if (rv >= rwratio) { //write
+            for (int j = 0; j < SIZE_OF_VALUE; j++) {
+                wvalues[i][j] = '0' + rand() % 10;
+            }
+            // run the thread
+            threads.push_back(new std::thread(Thread_helper::_put, abd_clt[i], key, sizeof(key), wvalues[i],
+                                              sizeof(wvalues[i])));
+            isread[i] = false;
+        } else{
+            threads.push_back(new std::thread(Thread_helper::_get, abd_clt[i], key, sizeof(key), &values[i],
+                                              &value_sizes[i]));
+            isread[i] = true;
+        }
+    }
+    // Wait for all threads to join
+    for (uint i = 0; i < NUMBER_OF_CLIENTS; i++) {
+        threads[i]->join();
+        if (isread[i]) delete values[i];
+    }
+}
+
 int main(int argc, char* argv[]){
 
 	if(argc != 2){
@@ -80,57 +118,43 @@ int main(int argc, char* argv[]){
 				return -1;
 			}
 		}
-        std::vector<std::thread*> threads;
+        //performance test
+        for (int i=0; i < 20; i++){
+            run_test_performance(abd_clt);
+        }
 
-		// Do write operations concurrently
+        /* //correstness test
+        std::vector<std::thread *> threads;
+
+        // Do write operations concurrently
         threads.clear();
         char wvalues[NUMBER_OF_CLIENTS][SIZE_OF_VALUE];
-		for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
-			
-			// build a random value
-			for(int j = 0; j < SIZE_OF_VALUE; j++){
-				wvalues[i][j] = '0' + rand() % 10;
-			}
-			// run the thread
-			threads.push_back(new std::thread(Thread_helper::_put, abd_clt[i], key, sizeof(key), wvalues[i], sizeof(wvalues[i])));
-	    }
-	    // Wait for all threads to join
-	    for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
-	    	threads[i]->join();
-	    }
-		
-		// Do get operations concurrently
-		threads.clear();
-		char* values[NUMBER_OF_CLIENTS];
-		uint32_t value_sizes[NUMBER_OF_CLIENTS];
-		for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
-			if (i == 1){
-                for(int j = 0; j < SIZE_OF_VALUE; j++){
-                    wvalues[i][j] = '0' + rand() % 10;
-                }
-                threads.push_back(new std::thread(Thread_helper::_put, abd_clt[i], key, sizeof(key), wvalues[i], sizeof(wvalues[i])));
-			} else {
-                // run the thread
-                threads.push_back(new std::thread(Thread_helper::_get, abd_clt[i], key, sizeof(key), &values[i],
-                                                  &value_sizes[i]));
-			}
-		}
-	    // Wait for all threads to join
-	    for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
-	    	threads[i]->join();
-	    	if (i != 1) delete values[i];
-	    }
-	    // remmeber after using values, delete them to avoid memory leak
+        for (uint i = 0; i < NUMBER_OF_CLIENTS; i++) {
 
+            // build a random value
+            for (int j = 0; j < SIZE_OF_VALUE; j++) {
+                wvalues[i][j] = '0' + rand() % 10;
+            }
+            // run the thread
+            threads.push_back(new std::thread(Thread_helper::_put, abd_clt[i], key, sizeof(key), wvalues[i],
+                                              sizeof(wvalues[i])));
+        }
+        // Wait for all threads to join
+        for (uint i = 0; i < NUMBER_OF_CLIENTS; i++) {
+            threads[i]->join();
+        }
 
-
+        // Do get operations concurrently
         threads.clear();
-        for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
-            if (i == 0){
-                for(int j = 0; j < SIZE_OF_VALUE; j++){
+        char *values[NUMBER_OF_CLIENTS];
+        uint32_t value_sizes[NUMBER_OF_CLIENTS];
+        for (uint i = 0; i < NUMBER_OF_CLIENTS; i++) {
+            if (i == 1) {
+                for (int j = 0; j < SIZE_OF_VALUE; j++) {
                     wvalues[i][j] = '0' + rand() % 10;
                 }
-                threads.push_back(new std::thread(Thread_helper::_put, abd_clt[i], key, sizeof(key), wvalues[i], sizeof(wvalues[i])));
+                threads.push_back(new std::thread(Thread_helper::_put, abd_clt[i], key, sizeof(key), wvalues[i],
+                                                  sizeof(wvalues[i])));
             } else {
                 // run the thread
                 threads.push_back(new std::thread(Thread_helper::_get, abd_clt[i], key, sizeof(key), &values[i],
@@ -138,17 +162,39 @@ int main(int argc, char* argv[]){
             }
         }
         // Wait for all threads to join
-        for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
+        for (uint i = 0; i < NUMBER_OF_CLIENTS; i++) {
+            threads[i]->join();
+            if (i != 1) delete values[i];
+        }
+        // remmeber after using values, delete them to avoid memory leak
+
+        threads.clear();
+        for (uint i = 0; i < NUMBER_OF_CLIENTS; i++) {
+            if (i == 0) {
+                for (int j = 0; j < SIZE_OF_VALUE; j++) {
+                    wvalues[i][j] = '0' + rand() % 10;
+                }
+                threads.push_back(new std::thread(Thread_helper::_put, abd_clt[i], key, sizeof(key), wvalues[i],
+                                                  sizeof(wvalues[i])));
+            } else {
+                // run the thread
+                threads.push_back(new std::thread(Thread_helper::_get, abd_clt[i], key, sizeof(key), &values[i],
+                                                  &value_sizes[i]));
+            }
+        }
+        // Wait for all threads to join
+        for (uint i = 0; i < NUMBER_OF_CLIENTS; i++) {
             threads[i]->join();
             if (i != 0) delete values[i];
         }
-		// Clean up allocated memory in struct Client
-		for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
-			if(client_delete(abd_clt[i]) == -1){
-				fprintf(stderr, "%s\n", "Error occured in deleting clients");
-				return -1;
-			}
-		}
+        // Clean up allocated memory in struct Client
+        for (uint i = 0; i < NUMBER_OF_CLIENTS; i++) {
+            if (client_delete(abd_clt[i]) == -1) {
+                fprintf(stderr, "%s\n", "Error occured in deleting clients");
+                return -1;
+            }
+        }
+        */
 	}
 	else if(std::string(argv[1]) == "CM"){
 		

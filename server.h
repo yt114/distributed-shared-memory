@@ -59,9 +59,9 @@ public:
 
 
 int num_server = 3;
-string server_addrs[] = {"localhost:50051",
-                         "localhost:50052",
-                         "localhost:50053"};
+string server_addrs[] = {"34.74.163.238:50051",
+                         "34.72.157.165:50052",
+                         "34.78.69.30:50053"};
 
 struct CMWriteTuple{
     int process_id;

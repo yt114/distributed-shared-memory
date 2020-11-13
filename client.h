@@ -63,12 +63,12 @@ struct Client{
     uint32_t number_of_servers; // Number of elements in the array servers
 };
 
-string Linear_read(const struct Client* c, string key, int time_wait=5000);
+string Linear_read(const struct Client* c, string key, int time_wait=500);
 
 /* perform linear write
  * return int: -1 means fails, 0 means success
  * */
-int Linear_write(const struct Client* c, string key, string value_to_update, int time_wait=5000);
+int Linear_write(const struct Client* c, string key, string value_to_update, int time_wait=500);
 
 /*ABD primitives*/
 int update(const struct Client* c, string& key, string& value, int lt, int clientID,
@@ -112,5 +112,5 @@ int get(const struct Client* c, const char* key, uint32_t key_size, char** value
  */
 int client_delete(struct Client* c);
 
-
+void run_test_performance(struct Client* abd_clt);
 #endif //DISTRIBUTED_SHARED_MEMORY_CLIENT_H

@@ -56,6 +56,8 @@ int query(const struct Client* c, string& key, vector<reply_holder>& replies, in
         holders.push_back(cur_request);
     }
 
+    cout<<"finsh query"<<endl;
+
     // break when a majority server reply arrive or
     // sum reply server number and failed server equals all server num
     while ((sucess_server_reply_num <  server_num / 2 + 1 )&&(reply_server_num < server_num)) {
@@ -87,6 +89,9 @@ int query(const struct Client* c, string& key, vector<reply_holder>& replies, in
             replies.push_back(cur_reply);
             ss<< " lt; ("<<cur_reply.lt<<","<<cur_reply.clientID<<") value: " << cur_reply.value<<endl;
         } else {
+            cout<<"-----------";
+            cout<<cur_request->status->error_message();
+            cout<<"--------------"<<endl;
             ss << " RPC failed " << cur_request->status->error_message() << endl;
         }
         reply_server_num += 1;
@@ -129,9 +134,9 @@ int update(const struct Client* c, string& key, string& value, int lt, int clien
         request_packet.set_fromclient(cur_clientID);
 
 
-//        chrono::system_clock::time_point deadline =
-//                std::chrono::system_clock::now() + std::chrono::milliseconds(time_wait);
-//        context.set_deadline(deadline);
+        chrono::system_clock::time_point deadline =
+                std::chrono::system_clock::now() + std::chrono::milliseconds(time_wait);
+        context.set_deadline(deadline);
         unique_ptr<ClientAsyncResponseReader<ReplyPacket>> rpc(
                 stub_->PrepareAsyncupdate(&context, request_packet, &cq));
 
