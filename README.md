@@ -51,6 +51,18 @@ Here, number of servers is set as 3. The client process forks three concurrent t
 ```
 There are some logs generated in `testcase/linear_logs/` which pass checking. 
 
+## performance
+| #server | write ratio           | 0.1    | 0.5    | 0.9    |
+|---------|-----------------------|--------|--------|--------|
+| 3       | average latency (sec) | 0.3445 | 0.3464 | 0.3465 |
+| 5       | average latency (sec) | 8.1   | 8.12  | 8.11  |
+This performace is to test client average request time connecting to these five servers spread in different area: 1.us−east, 2.us−central, 3.europe−west, 4. asia −east 5. europe−north. 
+
+When server number is 3, 1.us−east, 2.us−central, 3.europe−west are used. 
+When server number is 5, servers outside us responses latency are more than 5s which incurs many timeout request. As a result, few request success for 5 server cases. 
+  
+
+
 ## Casual order shared memory
 Implements shared memory algorithm proposed in [2], which gurantees of concurrent operations' causal order and non-blocking property.
 
