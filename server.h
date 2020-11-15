@@ -34,7 +34,7 @@ using grpc::ClientContext;
 using namespace  std;
 
 std::mutex g_i_mutex; // global lock for query and
-int num_server = 3;
+int num_server = 5;
 string server_addrs[] = {"35.192.146.152:50051", //server 0
                          "34.74.163.238:50052", //server 1
                          "104.154.25.168:50053", //server 2
