@@ -7,6 +7,13 @@ Server address on client side is defined at the beginning of `userprogram.c` in 
 
 Server address on server side is defined at `server.h` in ` string server_addrs[]`.
 
+**Run server**
+The compiled `server` takes 3 arguments:
+1. the server id starting from 0.
+2. the server address in `<ip>:<port>`.
+3. the Shared memory protocal. "ABD" for linearizable shared memory and "CM" for casual memory. 
+Ex: `$./server 0 0.0.0.0:50051 CM`
+
 ## Linearizable Shared Memory
 Complete network.
 
