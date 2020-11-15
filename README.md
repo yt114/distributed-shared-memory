@@ -1,8 +1,10 @@
 # distributed-shared-memory
 
 ## Project structure
-**Config**
+*Config*
+
 Server address on client side is defined at the beginning of `userprogram.c` in `static struct Server_info servers[]`.
+
 Server address on server side is defined at `server.h` in ` string server_addrs[]`.
 
 ## Linearizable Shared Memory
