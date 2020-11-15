@@ -1,9 +1,11 @@
 # distributed-shared-memory
 
 ## Project structure
-`config.txt` contains server address. The first line is the server numbers, say n. The next n line is the  server address in the fomat of `<ip>:<port>`.
+**Config**
+Server address on client side is defined at the beginning of `userprogram.c` in `static struct Server_info servers[]`.
+Server address on server side is defined at `server.h` in ` string server_addrs[]`.
 
-## Linearizability 
+## Linearizable Shared Memory
 Complete network.
 
 We treat each key-value pair as a object/automatic register. 
