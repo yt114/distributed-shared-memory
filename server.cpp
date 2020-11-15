@@ -126,8 +126,17 @@ Status CMImpl::cm_client_request(::grpc::ServerContext *context, const ::CMClien
     return Status::OK;
 }
 
-Status CMImpl::cm_update(::grpc::ServerContext *context, const ::CMUpdatePacket *request, ::CMack *response) {
+void CMImpl::_write_to_inqueue_thread_function(int request_process_id, string key, string value, vector<int> vt){
+    cout<<"try to write to inq starts"<<endl;
     std::unique_lock<std::mutex> lock(g_i_mutex);
+    CMWriteTuple newpacket(request_process_id, key, value, vt);
+    InQueue.push(newpacket);
+    cout<<"write to inq finished"<<endl;
+    cout<<"add new packet to inqueue size now is "<<InQueue.size()<<endl;
+    cout<<endl;
+}
+
+Status CMImpl::cm_update(::grpc::ServerContext *context, const ::CMUpdatePacket *request, ::CMack *response) {
     string key = request->key();
     string value = request->value();
     int request_process_id = request->processid();
@@ -143,8 +152,10 @@ Status CMImpl::cm_update(::grpc::ServerContext *context, const ::CMUpdatePacket 
         vt[i] = request->vt(i);
     }
 
-    CMWriteTuple newpacket(request_process_id, key, value, vt);
-    InQueue.push(newpacket);
+    thread _helper_t(&CMImpl::_write_to_inqueue_thread_function,
+                     this, request_process_id,
+                     key, value, vt);
+    _helper_t.detach();
 
     cout<<"receive a packet:"<<endl;
     cout<<"process id: "<<request_process_id <<" key:" <<key;
@@ -152,8 +163,6 @@ Status CMImpl::cm_update(::grpc::ServerContext *context, const ::CMUpdatePacket 
     for (int i=0; i<received_num_servers; i++){
         cout<<i<<" : "<< vt[i]<<" , ";
     }
-    cout<<"add new packet to inqueue size now is "<<InQueue.size()<<endl;
-    cout<<endl;
 
     response->set_is_success(true);
     response->set_reply_processid(process_id);

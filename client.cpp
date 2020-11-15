@@ -332,6 +332,7 @@ struct Client* client_instance(const uint32_t id, const char* protocol,
     auto ret_client = new Client;
     ret_client->id = id;
     strcpy(ret_client->protocol, protocol);
+
     ret_client->servers = servers;
     ret_client->number_of_servers = number_of_servers;
     return ret_client;

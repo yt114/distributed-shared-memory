@@ -34,6 +34,10 @@ using grpc::ClientContext;
 using namespace  std;
 
 std::mutex g_i_mutex; // global lock for query and
+int num_server = 3;
+string server_addrs[] = {"0.0.0.0:50051", //server 0
+                         "0.0.0.0:50052", //server 1
+                         "0.0.0.0:50053"}; //server 2
 
 int ServerID = 0;
 string null_value = "00000";
@@ -56,12 +60,6 @@ public:
 
     string server_address;
 };
-
-
-int num_server = 3;
-string server_addrs[] = {"34.74.163.238:50051",
-                         "34.72.157.165:50052",
-                         "34.78.69.30:50053"};
 
 struct CMWriteTuple{
     int process_id;
@@ -109,7 +107,11 @@ public:
     Status cm_client_request(ServerContext* context, const CMClientRequestPacket* request,
                              CMClientReplyPacket* response) override;
 
+    /*a non blocking function*/
     Status cm_update(::grpc::ServerContext* context, const ::CMUpdatePacket* request, ::CMack* response) override;
+
+    /* called by cm_update. should be detached as called thread can be destory*/
+    void _write_to_inqueue_thread_function(int request_process_id, string key, string value, vector<int> vt);
 
     [[noreturn]] void send_thread_func();
 
