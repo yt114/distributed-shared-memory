@@ -90,7 +90,7 @@ Reference:
 | #server | write ratio           | 0.1    | 0.5    | 0.9    |
 |---------|-----------------------|--------|--------|--------|
 | 3       | average latency (sec) | 0.1699 | 0.1929 | 0.1986 |
-| 5       | average latency (sec) | 8.1   | 8.12  | 8.11  |
+| 5       | average latency (sec) | 0.21065 | 0.2573 | 0.28485 |
 
 ### structure
 OutQueue: A FIFO queue contains write tuple which is <process id, key, value, vector time>
