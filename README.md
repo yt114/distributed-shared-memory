@@ -8,12 +8,19 @@ Server address on client side is defined at the beginning of `userprogram.c` in 
 Server address on server side is defined at `server.h` in ` string server_addrs[]`.
 
 **Run server**
+
 The compiled `server` takes 3 arguments:
 1. the server id starting from 0.
 2. the server address in `<ip>:<port>`.
 3. the Shared memory protocal. "ABD" for linearizable shared memory and "CM" for casual memory. 
 
 Ex: `$./server 0 0.0.0.0:50051 CM`
+
+
+**Run client**
+The `client.h` defines `put(...), get(...)` interface for a client to write/read a key/value from the server quorum.
+The `userprogram.c` contains `main` function for testing. Compile using `makefile` or cmake gives a `client` executable file. 
+run `client` by `$./client ABD` for linearizable SM or `$./client CM` casual SM. 
 
 ## Linearizable Shared Memory
 Complete network.
