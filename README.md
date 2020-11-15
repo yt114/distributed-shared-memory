@@ -1,5 +1,8 @@
 # distributed-shared-memory
 
+## Project structure
+`config.txt` contains server address. The first line is the server numbers, say n. The next n line is the  server address in the fomat of `<ip>:<port>`.
+
 ## Linearizability 
 Complete network.
 
