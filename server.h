@@ -35,9 +35,9 @@ using namespace  std;
 
 std::mutex g_i_mutex; // global lock for query and
 int num_server = 3;
-string server_addrs[] = {"0.0.0.0:50051", //server 0
-                         "0.0.0.0:50052", //server 1
-                         "0.0.0.0:50053"}; //server 2
+string server_addrs[] = {"35.192.146.152:50051", //server 0
+                         "34.74.163.238:50052", //server 1
+                         "104.154.25.168:50053"}; //server 2
 
 int ServerID = 0;
 string null_value = "00000";

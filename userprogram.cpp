@@ -25,9 +25,9 @@ int rwratio = 5; //read/write
 
 // Define your server information here
 static struct Server_info servers[] = {
-		{"0.0.0.0", 50051},
-		{"0.0.0.0", 50052},
-		{"0.0.0.0", 50053}};
+		{"35.192.146.152", 50051},
+		{"34.74.163.238", 50052},
+		{"104.154.25.168", 50053}};
 
 static char key[] = "key1"; // We only have one key in this userprogram
 
