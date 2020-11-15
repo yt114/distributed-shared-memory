@@ -19,9 +19,9 @@ typedef unsigned int uint;
 
 #define NUMBER_OF_CLIENTS 	3
 #define SIZE_OF_VALUE 		2
-#define TEST_IT 20
+#define TEST_IT 100
 
-int rwratio = 9; // read/write
+int rwratio = 1; // read:write = rwratio : 1-0.1*rwratio
 
 // Define your server information here
 static struct Server_info servers[] = {
