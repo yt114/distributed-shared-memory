@@ -18,6 +18,7 @@ Ex: `$./server 0 0.0.0.0:50051 CM`
 
 
 **Run client**
+
 The `client.h` defines `put(...), get(...)` interface for a client to write/read a key/value from the server quorum.
 The `userprogram.c` contains `main` function for testing. Compile using `makefile` or cmake gives a `client` executable file. 
 run `client` by `$./client ABD` for linearizable SM or `$./client CM` casual SM. 
