@@ -124,9 +124,6 @@ a proposer thread, which takes client's request and communicate with accepters.
 **stage 2** After consensus phase completes, if return command ID is same as the requested command ID, a log entry is achieved consensus. Else the next log entry is found and the concensus protocal is repeated. Eiter case, the returned command are executed in StateMachine.  
 
 ##### Concensus protocol
-
-Proposer side:
-
 **Phase 1**: broadcasr Prepare RPCs. Proposer sends (command, proposal num) to all acceptor.
 
 **Phase 2** Acceptor responses to Prepare RPC. 
@@ -140,6 +137,9 @@ Prepare RPC(proposal Num):
   else:
     return NACK
 ```
+**Phase 3**: if NACK Proposer increment proposal number and go to phase1. Else broadcast Accept(proposal num, value).
+
+**Phase 4**: 
 
 [1] Sharing memory robustly in message-passing systems. H Attiya, A Bar-Noy, D Dolev. Journal of the ACM 42 (1), 124-142, 1995. 638, 1995.
 
