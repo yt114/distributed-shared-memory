@@ -117,12 +117,30 @@ In this project, I implemented a Paxos and runs a Linearizability distributed sh
 **stage 3** the call finishes.
 
 #### Server side
-Acting as a proposer.
-**stage 1**: upon get a request from a client, the proposal find an empty log entry of smallest index. Each command is assigned a unique ID as (serverID, localcommandID), where local commandID is a monotonactily increaseing int local variable. The proposer then sends a preposal (command, proposal num) to accepters. 
+a proposer thread, which takes client's request and communicate with accepters.  
+
+**stage 1**: upon get a new request from a client, the proposal find an empty log entry of smallest index. Each command is assigned a unique ID as (clientID, localcommandID), where local commandID is a monotonactily increaseing int local variable. The proposer then sends a preposal (command, proposal num) to accepters. 
 
 **stage 2** After consensus phase completes, if return command ID is same as the requested command ID, a log entry is achieved consensus. Else the next log entry is found and the concensus protocal is repeated. Eiter case, the returned command are executed in StateMachine.  
 
+##### Concensus protocol
 
+Proposer side:
+
+**Phase 1**: broadcasr Prepare RPCs. Proposer sends (command, proposal num) to all acceptor.
+
+**Phase 2** Acceptor responses to Prepare RPC. 
+```
+Init: minProposal = -1, acceptedProposal = -1, acceptedValue = NULL.
+
+Prepare RPC(proposal Num):
+
+if proposal Num > minProposal:
+  minProposal = proposal Num
+  return (acceptedProposal, acceptedValue)
+else:
+  return NACK
+```
 
 [1] Sharing memory robustly in message-passing systems. H Attiya, A Bar-Noy, D Dolev. Journal of the ACM 42 (1), 124-142, 1995. 638, 1995.
 
