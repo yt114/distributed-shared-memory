@@ -134,12 +134,11 @@ Proposer side:
 Init: minProposal = -1, acceptedProposal = -1, acceptedValue = NULL.
 
 Prepare RPC(proposal Num):
-
-if proposal Num > minProposal:
-  minProposal = proposal Num
-  return (acceptedProposal, acceptedValue)
-else:
-  return NACK
+  if proposal Num > minProposal:
+    minProposal = proposal Num
+    return (acceptedProposal, acceptedValue)
+  else:
+    return NACK
 ```
 
 [1] Sharing memory robustly in message-passing systems. H Attiya, A Bar-Noy, D Dolev. Journal of the ACM 42 (1), 124-142, 1995. 638, 1995.
