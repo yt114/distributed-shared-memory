@@ -111,13 +111,18 @@ In this project, I implemented a Paxos and runs a Linearizability distributed sh
 ### Basic Paxos
 #### Client side
 **stage 1**: A clients sends a get/put request to its local server(acts as a proposer). The command is the value for the system to reach consensus on. 
+
 **stage 2**: the clients blocks until server returns.
+
 **stage 3** the call finishes.
 
 #### Server side
 Acting as a proposer.
 **stage 1**: upon get a request from a client, the proposal find an empty log entry of smallest index. Each command is assigned a unique ID as (serverID, localcommandID), where local commandID is a monotonactily increaseing int local variable. The proposer then sends a preposal (command, proposal num) to accepters. 
-**stage 2** After consensus phase completes, if return command ID is same as the requested command ID, a log entry is achieved consensus. Else the next log entry is found and the concensus protocal is repeated. Eiter case, the returned command are executed.  
+
+**stage 2** After consensus phase completes, if return command ID is same as the requested command ID, a log entry is achieved consensus. Else the next log entry is found and the concensus protocal is repeated. Eiter case, the returned command are executed in StateMachine.  
+
+
 
 [1] Sharing memory robustly in message-passing systems. H Attiya, A Bar-Noy, D Dolev. Journal of the ACM 42 (1), 124-142, 1995. 638, 1995.
 
