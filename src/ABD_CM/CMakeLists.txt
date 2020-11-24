@@ -147,30 +147,37 @@ add_custom_command(
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
 # Targets greeter_[async_](client|server)
-
-add_executable(PaxosClient
+add_executable(Client
         userprogram.cpp
-        paxos_client.cpp
-        paxos_client.h
-        paxos.grpc.pb.cc
-        paxos.grpc.pb.h
-        paxos.pb.cc
-        paxos.pb.h
+        client.cpp
+        client.h
+        sharedMemory.grpc.pb.cc
+        sharedMemory.grpc.pb.h
+        sharedMemory.pb.cc
+        sharedMemory.pb.h
         )
-target_link_libraries(PaxosClient
+target_link_libraries(Client
         ${_REFLECTION}
         ${_GRPC_GRPCPP}
         ${_PROTOBUF_LIBPROTOBUF})
 
-add_executable(PaxosServer
-        paxos_server.cpp
-        paxos_server.h
-        paxos.grpc.pb.cc
-        paxos.grpc.pb.h
-        paxos.pb.cc
-        paxos.pb.h
+add_executable(Server server.cpp
+        server.h
+        sharedMemory.grpc.pb.cc
+        sharedMemory.grpc.pb.h
+        sharedMemory.pb.cc
+        sharedMemory.pb.h
         )
-target_link_libraries(PaxosServer
+target_link_libraries(Server
+        ${_REFLECTION}
+        ${_GRPC_GRPCPP}
+        ${_PROTOBUF_LIBPROTOBUF})
+
+add_executable(PaxosClient
+        Paxos_client.cpp
+        Paxos_client.h
+        )
+target_link_libraries(PaxosClient
         ${_REFLECTION}
         ${_GRPC_GRPCPP}
         ${_PROTOBUF_LIBPROTOBUF})

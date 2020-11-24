@@ -23,12 +23,12 @@ PROTOS_PATH = .
 
 vpath %.proto $(PROTOS_PATH)
 
-all: system-check paxos_server paxos_client
+all: system-check server client
 
-paxos_server: paxos.pb.o paxos.grpc.pb.o paxos_server.o
+server: sharedMemory.pb.o sharedMemory.grpc.pb.o server.o
 	$(CXX) $^ $(LDFLAGS) -o $@
 
-paxos_client: paxos.pb.o paxos.grpc.pb.o paxos_client.o userprogram.o
+client: sharedMemory.pb.o sharedMemory.grpc.pb.o client.o userprogram.o
 	$(CXX) $^ $(LDFLAGS) -o $@
 
 .PRECIOUS: %.grpc.pb.cc
