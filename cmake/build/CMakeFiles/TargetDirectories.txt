@@ -1,0 +1,4 @@
+/Users/frank999/Documents/513p2/distributed-shared-memory/cmake/build/CMakeFiles/rebuild_cache.dir
+/Users/frank999/Documents/513p2/distributed-shared-memory/cmake/build/CMakeFiles/edit_cache.dir
+/Users/frank999/Documents/513p2/distributed-shared-memory/cmake/build/CMakeFiles/PaxosServer.dir
+/Users/frank999/Documents/513p2/distributed-shared-memory/cmake/build/CMakeFiles/PaxosClient.dir

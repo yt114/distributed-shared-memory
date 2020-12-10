@@ -38,10 +38,10 @@ message PreparePacket{
 message PromisePacket{
   int32 server_id = 11;
   int32 log_entry = 10;
-  bool error = 1;
+  bool error = 1; //NACK
   string error_message = 2;
 
-  int32 max_proposal_num = 3;
+  int32 max_proposal_num = 3; //accepted proposal num
   string accepted_id = 4;
 
   //define accpeted value

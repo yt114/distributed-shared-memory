@@ -24,6 +24,8 @@
 #include <queue>
 #include <grpc/support/log.h>
 #include <sstream>
+#include <grpcpp/grpcpp.h>
+#include <grpc/support/log.h>
 
 using grpc::Server;
 using grpc::ServerBuilder;
@@ -41,6 +43,37 @@ using grpc::ClientAsyncResponseReader;
 
 using namespace  std;
 
+class prepare_request_holder{
+public:
+    ~prepare_request_holder(){
+        delete status;
+        delete reply_packet;
+    }
+    shared_ptr<Channel> serverChannel;
+    unique_ptr<PaxosAccepter::Stub> stub_;
+    unique_ptr<ClientAsyncResponseReader<PromisePacket>> rpc;
+
+    long tag;
+    Status* status;
+    PromisePacket* reply_packet;
+};
+
+class propose_request_holder{
+public:
+    ~prepare_request_holder(){
+        delete status;
+        delete reply_packet;
+    }
+    shared_ptr<Channel> serverChannel;
+    unique_ptr<PaxosAccepter::Stub> stub_;
+    unique_ptr<ClientAsyncResponseReader<AcceptPacket>> rpc;
+
+    long tag;
+    Status* status;
+    AcceptPacket* reply_packet;
+};
+
+
 struct StateMachineCommand{
     string cmd;
     string key;
@@ -54,11 +87,6 @@ struct AccepterEntry{
     StateMachineCommand acceptedValue;
     int minProposal;
     int acceptedProposal;
-
-    AccepterEntry(){
-        minProposal = -1;
-        acceptedProposal = -1;
-    }
 };
 
 class Proposer final : PaxosProposer::Service{
@@ -71,7 +99,7 @@ public:
 
     int paxos_prepare(int entry_id, int propose_num, int& acceptedProposal, StateMachineCommand& return_val);
 
-    int paxos_propose(int entry_id, int propose_num, int& minProposal,, StateMachineCommand& propos_val);
+    int paxos_propose(int entry_id, int propose_num, StateMachineCommand& propos_val);
 
     int execut_cmd(StateMachineCommand& cmd);
 private:
@@ -87,12 +115,14 @@ private:
 
 class Acceptor final : PaxosAccepter::Service{
 public:
+
+
     Status Prepare(::grpc::ServerContext* context, const ::PreparePacket* request, ::PromisePacket* response) override;
 
     Status Propose(::grpc::ServerContext* context, const ::ProposePacket* request, ::AcceptPacket* response) override;
 private:
-    mutex accept_lock;
-    unordered_map<int, StateMachineCommand> paxos_instances;
+    mutex accepter_lock;
+    unordered_map<int, AccepterEntry> paxos_instances;
 };
 
 #endif //DSM_PAXOS_SERVER_H
