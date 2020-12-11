@@ -29,29 +29,6 @@ endif()
 
 find_package(Threads REQUIRED)
 
-if (CMAKE_HOST_SYSTEM_NAME MATCHES "Darwin")
-  execute_process(
-          COMMAND brew --prefix OpenSSL
-          RESULT_VARIABLE BREW_OPENSSL
-          OUTPUT_VARIABLE BREW_OPENSSL_PREFIX
-          OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
-  if (BREW_OPENSSL EQUAL 0 AND EXISTS "${BREW_OPENSSL_PREFIX}")
-    message(STATUS "Found OpenSSL keg installed by Homebrew at ${BREW_OPENSSL_PREFIX}")
-    set(OPENSSL_ROOT_DIR "${BREW_OPENSSL_PREFIX}/")
-    set(OPENSSL_INCLUDE_DIR "${BREW_OPENSSL_PREFIX}/include")
-    set(OPENSSL_LIBRARIES "${BREW_OPENSSL_PREFIX}/lib")
-    set(OPENSSL_CRYPTO_LIBRARY "${BREW_OPENSSL_PREFIX}/lib/libcrypto.dylib")
-  endif()
-endif()
-
-find_package(OpenSSL REQUIRED)
-if (OPENSSL_FOUND)
-  message(STATUS "Found OpenSSL ${OPENSSL_VERSION}")
-else()
-  message(STATUS "OpenSSL Not Found")
-endif()
-
 if(GRPC_AS_SUBMODULE)
   # One way to build a projects that uses gRPC is to just include the
   # entire gRPC project tree via "add_subdirectory".
@@ -67,7 +44,7 @@ if(GRPC_AS_SUBMODULE)
   #
   # A more robust approach to add dependency on gRPC is using
   # cmake's ExternalProject_Add (see cmake_externalproject/CMakeLists.txt).
-
+  
   # Include the gRPC's cmake build (normally grpc source code would live
   # in a git submodule called "third_party/grpc", but this example lives in
   # the same repository as gRPC sources, so we just look a few directories up)
@@ -170,30 +147,37 @@ add_custom_command(
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
 # Targets greeter_[async_](client|server)
-
-add_executable(PaxosClient
+add_executable(Client
         userprogram.cpp
-        paxos_client.cpp
-        paxos_client.h
-        paxos.grpc.pb.cc
-        paxos.grpc.pb.h
-        paxos.pb.cc
-        paxos.pb.h
+        client.cpp
+        client.h
+        sharedMemory.grpc.pb.cc
+        sharedMemory.grpc.pb.h
+        sharedMemory.pb.cc
+        sharedMemory.pb.h
         )
-target_link_libraries(PaxosClient
+target_link_libraries(Client
         ${_REFLECTION}
         ${_GRPC_GRPCPP}
         ${_PROTOBUF_LIBPROTOBUF})
 
-add_executable(PaxosServer
-        paxos_server.cpp
-        paxos_server.h
-        paxos.grpc.pb.cc
-        paxos.grpc.pb.h
-        paxos.pb.cc
-        paxos.pb.h
+add_executable(Server server.cpp
+        server.h
+        sharedMemory.grpc.pb.cc
+        sharedMemory.grpc.pb.h
+        sharedMemory.pb.cc
+        sharedMemory.pb.h
         )
-target_link_libraries(PaxosServer
+target_link_libraries(Server
+        ${_REFLECTION}
+        ${_GRPC_GRPCPP}
+        ${_PROTOBUF_LIBPROTOBUF})
+
+add_executable(PaxosClient
+        Paxos_client.cpp
+        Paxos_client.h
+        )
+target_link_libraries(PaxosClient
         ${_REFLECTION}
         ${_GRPC_GRPCPP}
         ${_PROTOBUF_LIBPROTOBUF})
