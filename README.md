@@ -120,9 +120,9 @@ Ex: `$./PaxosServer 0 0.0.0.0:50051 0 0.0.0.0:50052`
 
 Once initilization is done, the process outputs:
 
-`Accepter Server id:0 listening on 0.0.0.0:50052
-Proposer Server id:0 listening on 0.0.0.0:50051
-`
+`Accepter Server id:0 listening on 0.0.0.0:50052`
+`Proposer Server id:0 listening on 0.0.0.0:50051`
+
 ### Basic Paxos
 #### Client side
 **stage 1**: A clients sends a get/put request to its local server(acts as a proposer). The command is the value for the system to reach consensus on. 
