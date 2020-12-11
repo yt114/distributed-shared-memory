@@ -108,6 +108,21 @@ Inqueue: A priority queue in ascending ordered  of write tuple's vector time
 ## Paxos
 In this project, I implemented a Paxos and runs a Linearizability distributed shared memory on top of that. 
 
+**Run server**
+the compiled server takes four arguments
+1. the proposer id, an int value
+2. the proposer address in <IP>:<port>
+3. the accepter id, an int value
+4. the accepter address in <IP>:<port>
+  
+ 
+Ex: `$./PaxosServer 0 0.0.0.0:50051 0 0.0.0.0:50052`
+
+Once initilization is done, the process outputs:
+
+`Accepter Server id:0 listening on 0.0.0.0:50052
+Proposer Server id:0 listening on 0.0.0.0:50051
+`
 ### Basic Paxos
 #### Client side
 **stage 1**: A clients sends a get/put request to its local server(acts as a proposer). The command is the value for the system to reach consensus on. 
