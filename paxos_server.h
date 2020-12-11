@@ -60,7 +60,7 @@ public:
 
 class propose_request_holder{
 public:
-    ~prepare_request_holder(){
+    ~propose_request_holder(){
         delete status;
         delete reply_packet;
     }
@@ -89,7 +89,7 @@ struct AccepterEntry{
     int acceptedProposal;
 };
 
-class Proposer final : PaxosProposer::Service{
+class Proposer final : public PaxosProposer::Service{
 public:
     Proposer(int id): server_id(id), min_empty_log_entry(0){}
 
@@ -113,14 +113,15 @@ private:
 };
 
 
-class Acceptor final : PaxosAccepter::Service{
+class Acceptor final : public PaxosAccepter::Service{
 public:
-
+    Acceptor(int id): accepter_id(id){};
 
     Status Prepare(::grpc::ServerContext* context, const ::PreparePacket* request, ::PromisePacket* response) override;
 
     Status Propose(::grpc::ServerContext* context, const ::ProposePacket* request, ::AcceptPacket* response) override;
 private:
+    int accepter_id;
     mutex accepter_lock;
     unordered_map<int, AccepterEntry> paxos_instances;
 };

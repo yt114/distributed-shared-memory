@@ -4,12 +4,9 @@
 
 #include "paxos_server.h"
 
-const int accepter_nums = 3;
+const int accepter_nums = 1;
 
-string accepter_addrs[] = {"localhost:50050",
-                           "localhost:50051",
-                           "localhost:50052"};
-
+string accepter_addrs[] = {"localhost:50051"};
 
 
 int Proposer::paxos_prepare(int entry_id, int propose_num, int& acceptedProposal, StateMachineCommand& return_val) {
@@ -326,7 +323,7 @@ Status Acceptor::Prepare(::grpc::ServerContext *context, const ::PreparePacket *
     return Status::OK;
 }
 
-Status Acceptor::Propose(::grpc::ServerContext *context, ::ProposePacket *request, ::AcceptPacket *response) {
+Status Acceptor::Propose(::grpc::ServerContext *context, const ::ProposePacket *request, ::AcceptPacket *response) {
     lock_guard<mutex> lock(accepter_lock);
 
     int from_server = request->server_id();
@@ -353,5 +350,41 @@ Status Acceptor::Propose(::grpc::ServerContext *context, ::ProposePacket *reques
     }
 
     return Status::OK;
+}
+
+
+void run_accepter(const string accepter_addr, int accepter_id){
+    ServerBuilder builder;
+    Acceptor service(accepter_id);
+    builder.AddListeningPort(accepter_addr, grpc::InsecureServerCredentials());
+    builder.RegisterService(&service);
+    std::unique_ptr<Server> server(builder.BuildAndStart());
+    std::cout << "Accepter Server id: "<<accepter_id<< " listening on " << accepter_addr << std::endl;
+    server->Wait();
+}
+
+void run_proposer(const string propose_addr, int proposer_id){
+    ServerBuilder builder;
+    Proposer service(proposer_id);
+    builder.AddListeningPort(propose_addr, grpc::InsecureServerCredentials());
+    builder.RegisterService(&service);
+    std::unique_ptr<Server> server(builder.BuildAndStart());
+    std::cout << "Proposer Server id: "<<proposer_id<< " listening on " << propose_addr << std::endl;
+    server->Wait();
+}
+
+int main(int argc, char** argv){
+    int propser_id = atoi(argv[1]);
+    string proposer_addr(argv[2]);
+
+    int accepter_id = atoi(argv[3]);
+    string accepter_addr(argv[4]);
+
+    thread accepter_t(run_accepter, accepter_addr, accepter_id);
+    thread proposer_t(run_proposer,  proposer_addr, propser_id);
+
+    accepter_t.join();
+    proposer_t.join();
+    return 0;
 }
 

@@ -25,11 +25,7 @@ int rwratio = 1; // read:write = rwratio : 1-0.1*rwratio
 
 // Define your server information here
 static struct Server_info servers[] = {
-		{"35.192.146.152", 50051},
-		{"34.74.163.238", 50052},
-		{"104.154.25.168", 50053},
-        {"35.235.111.80",50054},
-        {"34.75.222.87",50055}};
+		{"127.0.0.1", 50051}};
 
 static char key[] = "key1"; // We only have one key in this userprogram
 
@@ -67,7 +63,6 @@ void run_test_performance(struct Client* abd_clt[]){
     std::vector<std::thread *> threads;
 
     // Do write operations concurrently
-
     char wvalues[NUMBER_OF_CLIENTS][SIZE_OF_VALUE];
     bool isread[NUMBER_OF_CLIENTS];
     char *values[NUMBER_OF_CLIENTS];
@@ -99,30 +94,23 @@ void run_test_performance(struct Client* abd_clt[]){
 }
 
 int main(int argc, char* argv[]){
-
-	if(argc != 2){
-		fprintf(stderr, "%s%s%s\n", "Error\n"
-		"Usage: ", argv[0], "[MP]\n\n"
-		"Please note to run the servers first\n"
-		"This application is just for your testing purposes, "
-		"and the evaluation of your code will be done with another initiation of your Client libraries.");
-		return -1;
-	}
-	 if(std::string(argv[1]) == "MP"){
-		
-		// Create CM clients
-		struct Client* cm_clt[NUMBER_OF_CLIENTS];
-		for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
-			cm_clt[i] = client_instance(i, "CM", servers, sizeof(servers) / sizeof(struct Server_info));
-			if(cm_clt[i] == NULL){
-				fprintf(stderr, "%s\n", "Error occured in creating clients");
-				return -1;
-			}
-		}
-        //performance test
-        for (int i=0; i < TEST_IT; i++){
-            run_test_performance(cm_clt);
+    // Create CM clients
+    struct Client* clt[NUMBER_OF_CLIENTS];
+    for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
+        clt[i] = client_instance(i, "P", servers, sizeof(servers) / sizeof(struct Server_info));
+        if(clt[i] == NULL){
+            fprintf(stderr, "%s\n", "Error occured in creating clients");
+            return -1;
         }
+    }
+
+    char wval[3] = "11";
+    put(clt[0], key, sizeof(key), wval, sizeof(wval));
+
+    //performance test
+//    for (int i=0; i < TEST_IT; i++){
+//        run_test_performance(cm_clt);
+//    }
 //		// Do write operations concurrently
 //		std::vector<std::thread*> threads;
 //        char wvalues[NUMBER_OF_CLIENTS][SIZE_OF_VALUE];
@@ -164,15 +152,6 @@ int main(int argc, char* argv[]){
 //			}
 //		}
 
-	}
-	else{
-		fprintf(stderr, "%s%s%s\n", "Error\n"
-		"Usage: ", argv[0], "[ABD/CM/MP]\n\n"
-		"Please note to run the servers first\n"
-		"This application is just for your testing purposes, "
-		"and the evaluation of your code will be done with another initiation of your Client libraries.");
-		return -1;
-	}
 
 	return 0;
 }
