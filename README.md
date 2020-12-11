@@ -108,6 +108,22 @@ Inqueue: A priority queue in ascending ordered  of write tuple's vector time
 ## Paxos
 In this project, I implemented a Paxos and runs a Linearizability distributed shared memory on top of that. 
 
+**Run server**
+the compiled server takes four arguments
+1. the proposer id, an int value
+2. the proposer address in <IP>:<port>
+3. the accepter id, an int value
+4. the accepter address in <IP>:<port>
+  
+ 
+Ex: `$./PaxosServer 0 0.0.0.0:50051 0 0.0.0.0:50052`
+
+Once initilization is done, the process outputs:
+
+`Accepter Server id:0 listening on 0.0.0.0:50052`
+
+`Proposer Server id:0 listening on 0.0.0.0:50051`
+
 ### Basic Paxos
 #### Client side
 **stage 1**: A clients sends a get/put request to its local server(acts as a proposer). The command is the value for the system to reach consensus on. 
@@ -117,7 +133,12 @@ In this project, I implemented a Paxos and runs a Linearizability distributed sh
 **stage 3** the call finishes.
 
 #### Server side
-a proposer thread, which takes client's request and communicate with accepters.  
+a proposer thread, which takes client's request and communicate with accepters. A proposer thread consist of 
+
+1. **state machine log**
+2. **memory cache**
+
+When a client request comes, it picks a minimal empty log entry and run poaxs instance. If a command is agreed on that entry, the proposr learns that by proposing a learned value. Then it executes that command. Then proposer increments empty log entry by 1, and run again until the client request is commited.
 
 **stage 1**: upon get a new request from a client, the proposal find an empty log entry of smallest index. Each command is assigned a unique ID as (clientID, localcommandID), where local commandID is a monotonactily increaseing int local variable. The proposer then sends a preposal (command, proposal num) to accepters. 
 
@@ -139,7 +160,7 @@ Prepare RPC(proposal Num):
 ```
 **Phase 3**: if NACK Proposer increment proposal number and go to phase1. Else broadcast Accept(proposal num, value).
 
-**Phase 4**: 
+**Phase 4**: Accepter returns minProposal = n if old_minProposal <= proposer's proposal num. Else it returns rejection.
 
 [1] Sharing memory robustly in message-passing systems. H Attiya, A Bar-Noy, D Dolev. Journal of the ACM 42 (1), 124-142, 1995. 638, 1995.
 
