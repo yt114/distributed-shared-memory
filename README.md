@@ -121,6 +121,7 @@ Ex: `$./PaxosServer 0 0.0.0.0:50051 0 0.0.0.0:50052`
 Once initilization is done, the process outputs:
 
 `Accepter Server id:0 listening on 0.0.0.0:50052`
+
 `Proposer Server id:0 listening on 0.0.0.0:50051`
 
 ### Basic Paxos
