@@ -161,6 +161,14 @@ Prepare RPC(proposal Num):
 **Phase 3**: if NACK Proposer increment proposal number and go to phase1. Else broadcast Accept(proposal num, value).
 
 **Phase 4**: Accepter returns minProposal = n if old_minProposal <= proposer's proposal num. Else it returns rejection.
+## performance
+| #server | write ratio           | 0.1    | 0.5    | 0.9    |
+|---------|-----------------------|--------|--------|--------|
+| 3       | average latency (sec) | 1.789 | 1.940 | 1.927 |
+
+Compared with ABD algorithm, the latency of Muti-paxos is much higher. (1) one possible reason is that mutiple concurrent request competing results in mutiple round needed. (2) The internet speed is not stable. 
+
+The latecy for read and write should be the same as they are all treated as command in replicated state machine.
 
 [1] Sharing memory robustly in message-passing systems. H Attiya, A Bar-Noy, D Dolev. Journal of the ACM 42 (1), 124-142, 1995. 638, 1995.
 
