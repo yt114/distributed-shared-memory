@@ -262,7 +262,7 @@ Status Proposer::client_request(::grpc::ServerContext *context, const ::ClientRe
         }
 
         cout<<"execute command: "<<endl;
-        execut_cmd(returned_cmd);
+        int found = execut_cmd(returned_cmd);
         if (returned_cmd.from_client == from_client && returned_cmd.client_cmd_id == command_id){//end of census
             propose_success = true;//end loop
 
@@ -273,7 +273,8 @@ Status Proposer::client_request(::grpc::ServerContext *context, const ::ClientRe
 
             response->set_client_command_id(command_id);
             response->set_key(returned_cmd.key);
-            response->set_value(returned_cmd.value);
+            if (found > 0) response->set_value(returned_cmd.value);
+            else response->set_value("00000");
         } else {
             propose_success = false;
             min_empty_log_entry += 1;
