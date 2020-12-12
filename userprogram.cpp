@@ -30,7 +30,7 @@ static struct Server_info servers[] = {
 static char key[] = "key1"; // We only have one key in this userprogram
 
 namespace Thread_helper{
-	void _put(const struct Client* c, const char* key, uint32_t key_size, const char* value, uint32_t value_size){
+	void _put(struct Client* c, const char* key, uint32_t key_size, const char* value, uint32_t value_size){
 		
 		int status = put(c, key, key_size, value, value_size);
 
@@ -44,7 +44,7 @@ namespace Thread_helper{
 		return;
 	}
 
-	void _get(const struct Client* c, const char* key, uint32_t key_size, char** value, uint32_t *value_size){
+	void _get(struct Client* c, const char* key, uint32_t key_size, char** value, uint32_t *value_size){
 
 		int status = get(c, key, key_size, value, value_size);
 
@@ -106,10 +106,12 @@ int main(int argc, char* argv[]){
 
     char wval[3] = "11";
     put(clt[0], key, sizeof(key), wval, sizeof(wval));
-
+    uint32_t vsz = 0;
+    char* values[NUMBER_OF_CLIENTS];
+    get(clt[0], key, sizeof(key), &values[0], &vsz);
     //performance test
 //    for (int i=0; i < TEST_IT; i++){
-//        run_test_performance(cm_clt);
+//        run_test_performance(clt);
 //    }
 //		// Do write operations concurrently
 //		std::vector<std::thread*> threads;
@@ -121,7 +123,7 @@ int main(int argc, char* argv[]){
 //			for(int j = 0; j < SIZE_OF_VALUE; j++){
 //				wvalues[i][j] = '0' + i;
 //			}
-//			threads.push_back(new std::thread(Thread_helper::_put, cm_clt[i], key, sizeof(key), wvalues[i], sizeof(wvalues[i])));
+//			threads.push_back(new std::thread(Thread_helper::_put, clt[i], key, sizeof(key), wvalues[i], sizeof(wvalues[i])));
 //	    }
 //	    // Wait for all threads to join
 //	    for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
@@ -135,7 +137,7 @@ int main(int argc, char* argv[]){
 //		for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
 //
 //			// run the thread
-//			threads.push_back(new std::thread(Thread_helper::_get, cm_clt[i], key, sizeof(key), &values[i], &value_sizes[i]));
+//			threads.push_back(new std::thread(Thread_helper::_get, clt[i], key, sizeof(key), &values[i], &value_sizes[i]));
 //	    }
 //	    // Wait for all threads to join
 //	    for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
@@ -146,7 +148,7 @@ int main(int argc, char* argv[]){
 //
 //		// Clean up allocated memory in struct Client
 //		for(uint i = 0; i < NUMBER_OF_CLIENTS; i++){
-//			if(client_delete(cm_clt[i]) == -1){
+//			if(client_delete(clt[i]) == -1){
 //				fprintf(stderr, "%s\n", "Error occured in deleting clients");
 //				return -1;
 //			}

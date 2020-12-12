@@ -103,7 +103,7 @@ int put(const struct Client* c, const char* key, uint32_t key_size, const char* 
  *
  * Returns 0 on success, and -1 on error.
  */
-int get(const struct Client* c, const char* key, uint32_t key_size, char** value, uint32_t *value_size);
+int get(struct Client* c, const char* key, uint32_t key_size, char** value, uint32_t *value_size);
 
 
 /* This function will destroy all the memory that might have been allocated and needs to be cleaned up.

@@ -136,7 +136,7 @@ int put(struct Client* c, const char* key, uint32_t key_size, const char* value,
     return 0;
 }
 
-int get(const struct Client* c, const char* key, uint32_t key_size, char** value, uint32_t *value_size){
+int get(struct Client* c, const char* key, uint32_t key_size, char** value, uint32_t *value_size){
     string updateKey;
     for (int i=0; i<key_size; i++){
         updateKey += key[i];
